@@ -1,0 +1,214 @@
+\documentclass[a4paper]{article}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+% Package for making LaTeX properly handle utf8 characters set and danish language rules
+\usepackage[utf8]{inputenc}
+\usepackage[danish]{babel}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+% Package for changing to a nicer font 
+\usepackage[T1]{fontenc}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+% Package for conctroling the text area
+\usepackage[margin=2.5cm]{geometry}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+% Package for inserting clickable hyperlinks in pdf versions as produced by pdflatex
+\usepackage{enumitem, hyperref}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+% Package for including figures. TeX and thus LaTeX was developped before the existence of directory file-structures, but the graphicspath let's you add directories, that the \includegraphics will search.
+\usepackage{graphicx}
+\graphicspath{{figures/}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+% Package for typesetting programs. Listings does not support fsharp, but a little modification goes a long way
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{verbatim}
+\usepackage{color}
+\usepackage{textcomp}
+
+\renewcommand{\figurename}{Figur}
+\renewcommand{\contentsname}{Indholdsfortegnelse}
+\renewcommand{\contentsname}{Table of Contents}
+\renewcommand{\lstlistingname}{Kildekode}
+\renewcommand{\partname}{Afsnit}
+
+\def\sectionautorefname~#1\null{%
+  Afsnit #1\null
+}
+
+\def\subsectionautorefname~#1\null{%
+  Afsnit #1\null
+}
+
+\def\figureautorefname~#1\null{%
+  Figur #1\null
+}
+
+\def\equationautorefname~#1\null{%
+  Ligning #1\null
+}
+
+\def\namedlabel#1#2{\begingroup
+    #2%
+    \def\@currentlabel{#2}%
+    \phantomsection\label{#1}\endgroup
+}
+
+\definecolor{bluekeywords}{rgb}{0.13,0.13,1}
+\definecolor{greencomments}{rgb}{0,0.5,0}
+\definecolor{turqusnumbers}{rgb}{0.17,0.57,0.69}
+\definecolor{redstrings}{rgb}{0.5,0,0}
+\definecolor{lightgray}{RGB}{240, 240, 240}
+
+\newcommand{\namedref}[1]{\autoref{#1} - \nameref{#1} på Side \pageref{#1}}
+
+\lstdefinelanguage{FSharp}
+				{morekeywords={\#load, \#r, let, new, match, with, rec, open, module, namespace, type, of, member, and, for, in, do, begin, end, fun, function, try, mutable, if, then, else, List, Set, Sudoku, Seq, false, true, Assert, printfn, print, sprintf, when, ->, >, ::, printf, yield, this},
+	keywordstyle=\color{bluekeywords},
+	sensitive=false,
+	morecomment=[l][\color{greencomments}]{///},
+	morecomment=[l][\color{greencomments}]{//},
+	morecomment=[s][\color{greencomments}]{{(*}{*)}},
+	morestring=[b]",
+	stringstyle=\color{redstrings},
+	tabsize=2, % sets default tabsize to 2 spaces
+	backgroundcolor=\color{lightgray}
+}
+
+\usepackage[table]{}
+\usepackage{array}
+\usepackage{algorithm}
+\usepackage{caption}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+\usepackage{mathtools}
+\usepackage{ragged2e}
+\usepackage{caption}
+\usepackage{amssymb}
+\usepackage{listingsutf8}
+\usepackage{newunicodechar}
+\usepackage{nameref}
+%\newunicodechar{┌}{?}
+
+% Site med mange eksempler - både kode og billeder
+% http://www.texample.net/tikz/
+
+%%% Tikz: pakke til at lave grafik
+\usepackage{tikz}
+
+\usepackage{url}
+
+%%% Tilføjer makroer der gør livet lettere for os
+\usetikzlibrary{arrows, shapes, positioning}
+
+%%% Pile
+%%% http://www.texample.net/media/pgf/builds/pgfmanualCVS2012-11-04.pdf (afsnit 24)
+\tikzset{
+  aggr/.style={->, >=open diamond},
+  inh/.style={->, >=open triangle 45}
+} 
+
+%%% Bokse
+%%% http://www.texample.net/media/pgf/builds/pgfmanualCVS2012-11-04.pdf (afsnit 49)
+\tikzset{
+  class/.style={draw, rectangle}
+}
+
+\lstset{ %
+  numbers=right,                    % where to put the line-numbers; possible values are (none, left, right)
+  numbersep=5pt,                   % how far the line-numbers are from the code
+  numberstyle=\small\color{bluekeywords}, % the style that is used for the line-numbers
+  stepnumber=1,                    % the step between two line-numbers. If it's 1, each line will be numbered
+  title=\lstname,                   % show the filename of files included with \lstinputlisting; also try caption instead of title
+  showstringspaces=false,
+  breaklines=true,
+  captionpos=b,
+  language=FSharp,
+  texcl=true,
+  inputencoding=utf8,
+  extendedchars=true,
+  mathescape=true,
+  %escapeinside={(*}{*)},
+  extendedchars=\true,
+  inputencoding=ansinew
+  }
+
+\setlength\parindent{0pt}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Package or using suits
+\usepackage{kmath,kerkis}
+\normalfont
+
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+ 
+\pagestyle{fancy}
+\fancyhf{}
+ 
+\rhead{Mads U. Svendsen, Anders F. Jørgensen, Nicolai L. Hargreave, Bo H. Thomsen}
+\rfoot{Side \thepage \hspace{1pt} af \pageref{LastPage}}
+
+\title{Prey & The Predators - Programmering og Problemløsning}
+\author{Mads U. Svendsen, Anders F. Jørgensen, Nicolai L. Hargreave, Bo H. Thomsen}
+
+\begin{document}
+	\maketitle % Insert title etc.
+        
+  \tableofcontents
+
+\section{Forord}
+  Denne opgave er lavet i Programmering og Problemløsning(PoP),
+    på Datalogisk Institut - Københavns Universitet(DIKU) - første semester år 2015/2016.
+    Opgaven har opgavenummeret 11g.
+\newpage
+    
+\section{Introduktion} \label{sec:introduction}
+   
+
+  \paragraph*{Sådan kompilerer du projektet\\}
+    I \path{/src} mappen ligger der en Makefile og hvis man kører den, 
+    kompileres \path{game.exe},
+    begge filer kan findes i mappen \path{/src}.
+    Følgende kommandoer er tilgængelige for vores makefile:
+    \begin{itemize}
+      \item \lstinline$make$ Kompilere både projektet og tests
+      \item \lstinline$make withdocs$ Kompilere projektet, tests og dokumentation
+    \end{itemize}
+
+    Tests findes i  mappen \path{/src}, i filen \path{tests.fsx}.
+
+\section{Problemformulering} \label{sec:problem}
+  
+  \subsection{Kravspecifikation} \label{ssec:demands}
+    
+  \section{Problemanalyse og design} \label{sec:design}
+    
+
+  \section{Programbeskrivelse} \label{sec:programDescription}
+    
+      
+  \section{Afprøvning} \label{sec:unitTest}
+    
+
+	\section{Diskussion og konlusion} \label{sec:conclusion}
+   
+  \section{Bilag}
+     
+      \subsection{Brugervejledning} \label{ssec:manual}
+        
+      \subsection{Kildekode} \label{ssec:sourceCode}
+        
+        \lstinputlisting[caption={Spilklasser},label={lst:blackjack}]{../src/blackjack.fsx}
+        \lstinputlisting[caption={Spillogikken},label={lst:game}]{../src/game.fsx}
+        \lstinputlisting[caption={Tests},label={lst:tests}]{../src/tests.fsx}
+
+      \subsection{Billeder}
+        
+\end{document}
