@@ -1,0 +1,16 @@
+* Pop animals - A11.3
+
+** Animal types:
+   
+| Prey            | Predetors       |
+|-----------------+-----------------|
+| Fixed Breedtime | Fixed Breedtime |
+|                 | Starve time     |
+|                 |                 |
+|                 |                 |
+
+
+** klasser:
+- Animal
+  - Prey
+  - Predetor
