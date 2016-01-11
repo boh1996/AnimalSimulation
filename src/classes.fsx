@@ -21,30 +21,110 @@ type Position = int*int
 /// <summary>Animal</summary>
 /// <param name="breedTime:int">breedTime:int</param>
 /// <param name="position:Position">Current position of the Animal</param>
-[<AbstractClass>]
-type Animal(breedTime:int,position:Position) =
-  let mutable _position,_age=position,0
-  member this.age with get() = _age
-  member this.position with get() = _position
-  member this.breedTime with get() = breedTime
-  member this.breedClock with get() = 0
-  abstract member move:Position->unit
-  member this.breed() = ()
-  abstract member tick:Array2D->unit
+type Animal(simulation : Simulation, x, y, breedTime) =
+    let _simulation = simulation
+    let _breedTime = breedTime
+    let _breedClock = simulation.tick
+    let mutable _x = x
+    let mutable _y = y
 
-type Prey(breedTime: int, position: Position) =
-  inherit Animal(breedTime, position)
+    let clamp (x, y) =
+        if x < 0 || y < 0 || x > _simulation.width || y > _simulation.height || (_x = x && _y = y)
+        then None
+        else Some(x, y)
 
-  override this.move(position: Position)
+    member this.simulation =
+        _simulation
 
-type Predator(breedTime: int, starveTime: int, position: Position) =
-  inherit Animal(breedTime, position)
-  let mutable _starveTime = starveTime
-  member this.starveTime with get() = _starveTime
-  member this.starveClock with get() = 0
+    member this.breedTime =
+        _breedTime
 
-  override this.move(position: Position)
-  member this.eat() = ()
+    member this.breedClock =
+        _breedClock
+
+    member this.x =
+        _x
+
+    member this.y =
+        _y
+
+    member this.breed =
+        let adjacent = this.adjacent
+        let (x, y) = List.head adjacent
+
+        if not (List.isEmpty adjacent) && Option.isNone (_simulation.cell x y) && _simulation.tick >= _breedTime + _breedClock
+        then this.clone x y
+
+    member this.adjacent =
+        List.choose clamp [_x + 1, _y; _x, _y + 1; _x - 1, _y; _x, _y - 1]
+
+    abstract member clone : int -> int -> unit
+    default this.clone x y =
+        printfn "this should not even happen"
+
+    abstract member simulate : unit
+    default this.simulate =
+        this.breed
+
+and Prey(simulation, x, y, breedTime) =
+    inherit Animal(simulation, x, y, breedTime)
+
+    override this.clone x y =
+        this.simulation.addPrey x y this.breedTime
+
+    override this.simulate =
+        base.simulate
+
+and Predator(simulation, x, y, breedTime, starveTime) =
+    inherit Animal(simulation, x, y, breedTime)
+    let _starveTime = starveTime // IMPLEMENT
+    let _starveClock = 0 // IMPLEMENT
+
+    member this.starveTime =
+        _starveTime
+
+    member this.starveClock =
+        _starveClock
+
+    override this.clone x y =
+        this.simulation.addPredator x y this.breedTime this.starveTime
+
+    override this.simulate =
+        base.simulate
+
+and Simulation() =
+    let mutable _tick = 0
+    let mutable _animals = [] : list<Animal>
+    let _grid = Array2D.create 5 5 (Option<Animal>.None)
+
+    member this.width =
+        Array2D.length1 _grid
+
+    member this.height =
+        Array2D.length2 _grid
+
+    member this.cell x y =
+        _grid.[x, y]
+
+    member this.tick =
+        _tick
+
+    member this.simulate =
+        List.iter (fun (animal : Animal) -> animal.simulate) _animals
+        _tick <- _tick + 1
+
+    member this.print =
+        printfn "%A\n%A\n%A" _tick _animals _grid
+
+    member this.addPrey x y breedTime =
+        let animal = Prey(this, x, y, breedTime)
+        _animals <- (upcast animal)::_animals
+        _grid.[x, y] <- Some(upcast animal)
+
+    member this.addPredator x y breedTime starveTime =
+        let animal = Predator(this, x, y, breedTime, starveTime)
+        _animals <- (upcast animal)::_animals
+        _grid.[x, y] <- Some(upcast animal)
 
 type Settings(jsonPath:string) =
   // let s = new Settings(__SOURCE_DIRECTORY__ + "setttings/default.json")
@@ -54,7 +134,6 @@ type Settings(jsonPath:string) =
       json.AsInteger()
     else
       defaultVal
-      
   member this.width with get() = checkJson read?width 50
   member this.height with get() = checkJson read?height 50
   member this.numberOfPredators with get() =  checkJson read?numberOfPredators 10
@@ -64,9 +143,3 @@ type Settings(jsonPath:string) =
   member this.preyBreedTime with get() =  checkJson read?preyBreedTime 5
   member this.timeSpan with get() = checkJson read?timeSpan 50
 
-
-
-type Simulation() =
-  member map = Array2D.create width height (Option<Animal>.None)
-  member history = [||]
-  member animals = [||]
