@@ -57,7 +57,6 @@ type Settings(jsonPath:string) =
 
   member this.readJSON() =
     let read = JsonValue.Load(jsonPath)
-    read
 
 
 type Simulation() =
