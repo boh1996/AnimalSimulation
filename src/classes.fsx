@@ -4,6 +4,7 @@
 open System
 open System.Collections
 open FSharp.Data
+open FSharp.Data.JsonExtensions
 
 /// <summary>Stores a Simulation History Record</summary>
 /// <param name="tick:int">The tick time to store this record for</param>
@@ -46,17 +47,23 @@ type Predator(breedTime: int, starveTime: int, position: Position) =
   member this.eat() = ()
 
 type Settings(jsonPath:string) =
-  member this.width with get() = 0
-  member this.height with get() = 0
-  member this.numberOfPredators with get() = 0
-  member this.numberOfPreys with get() = 0
-  member this.starveTime with get() = 0
-  member this.predatorBreedTime with get() = 0
-  member this.preyBreedTime with get() = 0
-  member this.timeSpan with get() = 0
+  // let s = new Settings(__SOURCE_DIRECTORY__ + "setttings/default.json")
+  let read = JsonValue.Load(jsonPath)
+  let checkJson json defaultVal =
+    if json <> JsonValue.Null then
+      json.AsInteger()
+    else
+      defaultVal
+      
+  member this.width with get() = checkJson read?width 50
+  member this.height with get() = checkJson read?height 50
+  member this.numberOfPredators with get() =  checkJson read?numberOfPredators 10
+  member this.numberOfPreys with get() =  checkJson read?numberOfPreys 10
+  member this.starveTime with get() =  checkJson read?starveTime 5
+  member this.predatorBreedTime with get() =  checkJson read?predatorBreedTime 5
+  member this.preyBreedTime with get() =  checkJson read?preyBreedTime 5
+  member this.timeSpan with get() = checkJson read?timeSpan 50
 
-  member this.readJSON() =
-    let read = JsonValue.Load(jsonPath)
 
 
 type Simulation() =
