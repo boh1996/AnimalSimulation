@@ -1,0 +1,55 @@
+<diagram program="umletino" version="14.0"><zoom_level>10</zoom_level><element><id>UMLClass</id><coordinates><x>360</x><y>230</y><w>350</w><h>190</h></coordinates><panel_attributes>&lt;&lt;Animal&gt;&gt;
+Package::Animal
+--
+- id: int
+- age: int
+- breedTime: int
+- x: int
+- y: int
+- breedClock: int
+--
++ move() : unit
++ breed() : unit
++ tick(map: Array2D byref, animals: Array&lt;Animal&gt; byref): unit</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>480</x><y>460</y><w>260</w><h>190</h></coordinates><panel_attributes>&lt;&lt;Predator&gt;&gt;
+Package::Animal
+--
+- starveTime: int
+- starveClock: int
+--
+# ( breedTime: int, starveTime: int ): Predator
+# eat( prey: Animal ) : unit</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>450</x><y>0</y><w>430</w><h>190</h></coordinates><panel_attributes>&lt;&lt;Simulation&gt;&gt;
+Package::Animal
+--
+- map: Array2D&lt;Option&lt;Animal&gt;&gt;
+- animals: Array&lt;Animal&gt;
+- history: Array&lt;History&gt;
+- settings: Settings
+--
+# ( settings: Settings ): Simulation
+# simulate(): unit
+# tick(): unit</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>250</x><y>460</y><w>210</w><h>190</h></coordinates><panel_attributes>&lt;&lt;Prey&gt;&gt;
+Package::Animal
+--
+--
+# ( breedTime: int ): Prey
+# move(): unit</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>390</x><y>410</y><w>30</w><h>70</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes><additional_attributes>10;50;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>530</x><y>410</y><w>30</w><h>70</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes><additional_attributes>10;50;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>460</x><y>180</y><w>30</w><h>70</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>10;50;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>50</x><y>30</y><w>280</w><h>220</h></coordinates><panel_attributes>&lt;&lt;Settings&gt;&gt;
+Package::Animal
+--
+- width: int
+- height: int
+- numberOfPreys: int
+- numberOfPredators: int
+- starveTime: int
+- predatorBreedTime: int
+- preyBreedTime: int
+- timeSpan: int
+--
+# (): Settings
+# readJSON(file: string) : unit</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>870</x><y>160</y><w>60</w><h>30</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>40;10;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>910</x><y>120</y><w>470</w><h>190</h></coordinates><panel_attributes>&lt;&lt;HistoryRecord&gt;&gt;
+Package::Animal
+--
+- tick: int
+- prey: int
+- predator: int
+--
+# (tick: int, prey: int, predator: int): unprey: Prey, predator: Predator) : HistoryRecord</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>320</x><y>120</y><w>150</w><h>30</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>10;10;130;10</additional_attributes></element></diagram>
