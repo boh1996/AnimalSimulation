@@ -1,0 +1,2 @@
+[<AbstractClass>]
+type Animal
