@@ -16,6 +16,7 @@ type HistoryRecord(tick: int, prey: int, predator: int) =
   member prey = prey
   member predator = predator
 
+/// Map position x * y
 type Position = int*int
 
 /// <summary>Animal</summary>

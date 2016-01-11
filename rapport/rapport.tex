@@ -191,10 +191,22 @@
     \subsection*{Simulation}
 
     \subsection*{Animal}
+      \texttt{Animal} er den globale/parent dyre klasse der som abstract klasse,
+      ligger en standard for hvordan et dyr ser ud.
+      Nogle få metoder kan implementeres på dette niveau, mens de fleste bare er abstract.
+      \texttt{Animal} fastligger at et dyr skal fieldsene age, breedTime, breedClock
+      og metoderne move, breed og tick.
 
       \subsubsection*{Prey}
+        \texttt{Prey} klassen nedarver fra den globale \texttt{Animal} klasse.
+        Den skal bruges til at bestemme typen i listen/kortet over dyr,
+        så \texttt{Prey} kan have en anden breedTime end Predators og så den kan implementere dens egen move.
 
       \subsubsection*{Predator}
+        \texttt{Predator} klassen nedarver fra den globale \texttt{Animal} klasse,
+        så udover de metoder og properties+fields der kommer derfra, skal den indeholde "starveTime"
+        og "starveClock" for at holde styr på sult. For at kunne gøre det, skal den overskrive move metoden,
+        og implementere end eat metode. En anden constructor skal også implementeres, fordi at kunne sætte de nye værdier.
 
     \subsection*{Settings}
       Typen \texttt{Settings} er et container element, 
