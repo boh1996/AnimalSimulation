@@ -1,3 +1,5 @@
+open System.Collections;
+
 /// <summary>Stores a Simulation History Record</summary>
 /// <param name="tick:int">The tick time to store this record for</param>
 /// <param name="prey:int">Number of preys</param>
@@ -37,3 +39,6 @@ type Predator(breedTime: int, starveTime: int, position: Position)
 
   override this.move(position: Position)
   member this.eat() = ()
+
+type Simulation() =
+  member map = Array2D.create width height (Option<Animal>.None)
