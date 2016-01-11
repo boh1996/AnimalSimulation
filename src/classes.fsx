@@ -128,7 +128,6 @@ and Simulation() =
         _grid.[x, y] <- Some(upcast animal)
 
 type Settings(jsonPath:string) =
-  // let s = new Settings(__SOURCE_DIRECTORY__ + "setttings/default.json")
   let read = JsonValue.Load(jsonPath)
   let checkJson json defaultVal =
     if json <> JsonValue.Null then

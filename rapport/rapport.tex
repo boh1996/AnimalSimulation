@@ -29,7 +29,6 @@
 \usepackage{verbatim}
 \usepackage{color}
 
-
 \renewcommand{\figurename}{Figur}
 \renewcommand{\contentsname}{Indholdsfortegnelse}
 \renewcommand{\contentsname}{Table of Contents}
@@ -189,6 +188,11 @@
     og afspejler også vores interne design og derfor faldt valget på det.
 
     \subsection*{Simulation}
+      \texttt{Simulation} er den klasse der samler alt den nødvendige data for simulationen.
+      Når en ny simulation skal begyndes, konstrueres et \texttt{Simulation} objekt,
+      og til dets konstruktør funktion gives et settings objekt med de nødvendige indstillinger.
+      Derefter sørger \texttt{Simulation} for at der bliver oprettet dyr,
+      kørt ticks m.m.
 
     \subsection*{Animal}
       \texttt{Animal} er den globale/parent dyre klasse der som abstract klasse,
