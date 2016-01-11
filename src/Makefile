@@ -1,25 +1,19 @@
 .PHONY: all clean
 
-PNAME=./src/modules/Sudoku/Sudoku
-DLLTARGET=./src/Sudoku
-GAMEFILE=./src/game
+PNAME=./
+TESTFILE=./test
+GAMEFILE=./simulation
 CC=fsharpc
-CFLAGS=-a --warnaserror+ --nologo
+CFLAGS= --warnaserror+ --nologo
 
 all: $(PNAME).dll
 
-$(PNAME).dll: $(PNAME).fsi $(PNAME).fs
-	$(CC) $(CFLAGS) -o $(DLLTARGET).dll $(PNAME).fsi $(PNAME).fs && $(CC) --warnaserror+ --nologo -o $(GAMEFILE).exe -r $(DLLTARGET).dll $(GAMEFILE).fsx
+$(PNAME).dll: 
+	$(CC) $(CFLAGS) $(GAMEFILE).fsx && $(CC) $(CFLAGS) $(TESTFILE).fsx
 
 
-build: $(PNAME).dll $(GAMEFILE).fsx
-	$(CC) --warnaserror+ --nologo -o $(GAMEFILE).exe -r $(PNAME).dll $(GAMEFILE).fsx
-
-dll: $(PNAME).fsi $(PNAME).fs 
-	$(CC) $(CFLAGS) -o $(DLLTARGET).dll $(PNAME).fsi $(PNAME).fs 
-
-withdocs: $(PNAME).fsi $(PNAME).fs
-	$(CC) $(CFLAGS) --doc:./src/SudokuDocs.xml -o $(DLLTARGET).dll $(PNAME).fsi $(PNAME).fs && $(CC) --warnaserror+ --nologo -o $(GAMEFILE).exe -r $(DLLTARGET).dll $(GAMEFILE).fsx
+withdocs: 
+	$(CC) $(CFLAGS) --doc:./animalDocs.xml $(GAMEFILE).fsx  &&  $(CC) $(CFLAGS) $(TESTFILE).fsx
 
 clean:
-	rm -f $(DLLTARGET).dll && rm -f $(GAMEFILE).exe
+	rm -f $(TESTFILE).exe && rm -f $(GAMEFILE).exe
