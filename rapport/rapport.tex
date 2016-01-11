@@ -155,37 +155,41 @@
 \rhead{Mads U. Svendsen, Anders F. Jørgensen, Nicolai L. Hargreave, Bo H. Thomsen}
 \rfoot{Side \thepage \hspace{1pt} af \pageref{LastPage}}
 
-\title{Prey & The Predators - Programmering og Problemløsning}
+\title{Prey \& The Predators - Programmering og Problemløsning}
 \author{Mads U. Svendsen, Anders F. Jørgensen, Nicolai L. Hargreave, Bo H. Thomsen}
 
 \begin{document}
-	\maketitle % Insert title etc.
-        
+	\maketitle
   \tableofcontents
-
 \section{Forord}
   Denne opgave er lavet i Programmering og Problemløsning(PoP),
     på Datalogisk Institut - Københavns Universitet(DIKU) - første semester år 2015/2016.
     Opgaven har opgavenummeret 11g.
+    I gruppen er Mads U. Svendsen, Anders F. Jørgensen, Nicolai L. Hargreave og Bo H. Thomsen.
 \newpage
     
 \section{Introduktion} \label{sec:introduction}
-   
+   I dette projekt er målet at udvikle en simulator,
+   den kan simulere det kendte Prey/Predator udviklings problem.
+   Simulatoren skal vise udviklingen blandt en gruppe af byttedur, 
+   og en gruppe af rovdyr. Hvordan mængden af rovdyr i perioder stiger,
+   men når de så når et specielt sted - falder kraftigt. Hvorefter mængden af byttedyr stiger.
+   Målet for projektet er at vende sig til objekter, klasser, abstrakte klasser og inheritance.
 
   \paragraph*{Sådan kompilerer du projektet\\}
-    I \path{/src} mappen ligger der en Makefile og hvis man kører den, 
-    kompileres \path{game.exe},
-    begge filer kan findes i mappen \path{/src}.
-    Følgende kommandoer er tilgængelige for vores makefile:
-    \begin{itemize}
-      \item \lstinline$make$ Kompilere både projektet og tests
-      \item \lstinline$make withdocs$ Kompilere projektet, tests og dokumentation
-    \end{itemize}
+    I \path{/src} mappen ligger \path{simulation.fsx},
+    den kan kompileres med fsharpc og køres med mono.
+    Den generere \path{simulation.exe}.
 
     Tests findes i  mappen \path{/src}, i filen \path{tests.fsx}.
 
 \section{Problemformulering} \label{sec:problem}
-  
+  Vi vil i dette projekt, bygge en ssimulator der kan simulere,
+  hvordan flere arter lever sammen i et hapitat.
+  Når nogle typer har den egenskab, at de kan spise andre.
+  I dette eksempel operere vi kun med to typer dyr, "Prey" og "Predator".
+
+
   \subsection{Kravspecifikation} \label{ssec:demands}
     
   \section{Problemanalyse og design} \label{sec:design}
@@ -205,9 +209,9 @@
         
       \subsection{Kildekode} \label{ssec:sourceCode}
         
-        \lstinputlisting[caption={Spilklasser},label={lst:blackjack}]{../src/blackjack.fsx}
-        \lstinputlisting[caption={Spillogikken},label={lst:game}]{../src/game.fsx}
-        \lstinputlisting[caption={Tests},label={lst:tests}]{../src/tests.fsx}
+        \lstinputlisting[caption={Simulations klasser},label={lst:classes}]{../src/classes.fsx}
+        \lstinputlisting[caption={Logik},label={lst:simulation}]{../src/simulation.fsx}
+        \lstinputlisting[caption={Tests},label={lst:tests}]{../src/test.fsx}
 
       \subsection{Billeder}
         
