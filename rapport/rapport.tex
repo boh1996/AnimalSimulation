@@ -28,7 +28,7 @@
 \usepackage{xcolor}
 \usepackage{verbatim}
 \usepackage{color}
-\usepackage{textcomp}
+
 
 \renewcommand{\figurename}{Figur}
 \renewcommand{\contentsname}{Indholdsfortegnelse}
@@ -91,34 +91,8 @@
 \usepackage{ragged2e}
 \usepackage{caption}
 \usepackage{amssymb}
-\usepackage{listingsutf8}
-\usepackage{newunicodechar}
 \usepackage{nameref}
-%\newunicodechar{┌}{?}
-
-% Site med mange eksempler - både kode og billeder
-% http://www.texample.net/tikz/
-
-%%% Tikz: pakke til at lave grafik
-\usepackage{tikz}
-
-\usepackage{url}
-
-%%% Tilføjer makroer der gør livet lettere for os
-\usetikzlibrary{arrows, shapes, positioning}
-
-%%% Pile
-%%% http://www.texample.net/media/pgf/builds/pgfmanualCVS2012-11-04.pdf (afsnit 24)
-\tikzset{
-  aggr/.style={->, >=open diamond},
-  inh/.style={->, >=open triangle 45}
-} 
-
-%%% Bokse
-%%% http://www.texample.net/media/pgf/builds/pgfmanualCVS2012-11-04.pdf (afsnit 49)
-\tikzset{
-  class/.style={draw, rectangle}
-}
+\usepackage{lmodern}
 
 \lstset{ %
   numbers=right,                    % where to put the line-numbers; possible values are (none, left, right)
@@ -131,12 +105,8 @@
   captionpos=b,
   language=FSharp,
   texcl=true,
-  inputencoding=utf8,
   extendedchars=true,
-  mathescape=true,
-  %escapeinside={(*}{*)},
-  extendedchars=\true,
-  inputencoding=ansinew
+  inputencoding=utf8
   }
 
 \setlength\parindent{0pt}
@@ -181,7 +151,7 @@
     den kan kompileres med fsharpc og køres med mono.
     Den generere \path{simulation.exe}.
 
-    Tests findes i  mappen \path{/src}, i filen \path{tests.fsx}.
+    Tests findes i  mappen \path{/src}, i filen \path{test.fsx}.
 
 \section{Problemformulering} \label{sec:problem}
   Vi vil i dette projekt, bygge en ssimulator der kan simulere,
@@ -189,11 +159,56 @@
   Når nogle typer har den egenskab, at de kan spise andre.
   I dette eksempel operere vi kun med to typer dyr, "Prey" og "Predator".
 
-
   \subsection{Kravspecifikation} \label{ssec:demands}
     
   \section{Problemanalyse og design} \label{sec:design}
-    
+    Efter at vi havde deffineret kravene til vores produkt(Se \namedref{ssec:demands}),
+    satte vi os ned og opbyggede en klasse struktur.
+    Voers ide til strukturen kan ses i \namedref{fig:umlDiagram}.
+
+    \begin{figure}[H]
+      \centering
+
+      \includegraphics[width=520px]{figures/uml.png}
+
+      \caption{UML diagram over vores klasse design}
+      \label{fig:umlDiagram}
+    \end{figure}
+
+    Vi har haft flere overvejeler omkring det med starttilstand/indstillinger.
+    Efter snakken frem og tilbage mellem kommandopropt-input og filbaseret input,
+    er vi kommet frem til at bruge en fil.
+    Det giver os den reneste kode og giver nem mulighed for at tilføje flere indstillinger.
+    Filformatet for denne fil kunne være flere, både ".csv", ".txt" og "json" er gode formater,
+    de to første er meget simple, mens ".json" er meget struktureret og det sikre en hvis datastruktur
+    og mulighed for bedre error tjek. Derfor er valget faldet på ".json".
+
+    Omkring output fil har vi også snakket om flere filformater,
+    ".csv" er et meget bredt brugt format til simulationsdata,
+    mens ".json" er nemt at læse ind fra. ".json" giver mest struktur,
+    og afspejler også vores interne design og derfor faldt valget på det.
+
+    \subsection*{Simulation}
+
+    \subsection*{Animal}
+
+      \subsubsection*{Prey}
+
+      \subsubsection*{Predator}
+
+    \subsection*{Settings}
+      Typen \texttt{Settings} er et container element, 
+      der indeholder starttilstanden for simulationen.
+      Den giver en struktureret måde at gemme og tilgå de indstilliger der skal bruges.
+      For at al logikken omkring indstillinger er indeholdt i en klasse,
+      har vi valgt at klassen også selv loader en fil.
+
+      Et Settings objekt kan derfor heller ikke oprettes uden at der gives en fil.
+
+    \subsection*{HistoryRecord}
+      HistoryRecord er en container klasse, der indeholder tilstanden for habitatet efter et tick.
+      Den skal indeholde antal ticks siden start, antal preys og antal predators ved dette tick.
+      Denne klasse ligger så struktur for et element i den JSON fil der gemmes når simulationen er slut.
 
   \section{Programbeskrivelse} \label{sec:programDescription}
     
@@ -210,8 +225,8 @@
       \subsection{Kildekode} \label{ssec:sourceCode}
         
         \lstinputlisting[caption={Simulations klasser},label={lst:classes}]{../src/classes.fsx}
-        \lstinputlisting[caption={Logik},label={lst:simulation}]{../src/simulation.fsx}
-        \lstinputlisting[caption={Tests},label={lst:tests}]{../src/test.fsx}
+        \lstinputlisting[caption={Simulations klasser},label={lst:simulation}]{../src/simulation.fsx}
+        \lstinputlisting[caption={Simulations klasser},label={lst:test}]{../src/test.fsx}
 
       \subsection{Billeder}
         

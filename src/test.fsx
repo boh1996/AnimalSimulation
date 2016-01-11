@@ -9,7 +9,7 @@ type Animal(simulation : Simulation, x, y, breedTime) =
     let mutable _y = y
 
     member this.canBreed =
-        //_simulation.tick >= _breedTime + _breedClock
+   
 
     member this.adjacent =
         [_x + 1, _y; _x, _y + 1; _x - 1, _y; _x, _y - 1]
