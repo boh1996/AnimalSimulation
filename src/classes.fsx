@@ -1,4 +1,9 @@
-open System.Collections;
+#r "System.Xml.Linq.dll"
+#r "FSharp.Data.dll"
+
+open System
+open System.Collections
+open FSharp.Data
 
 /// <summary>Stores a Simulation History Record</summary>
 /// <param name="tick:int">The tick time to store this record for</param>
@@ -40,5 +45,21 @@ type Predator(breedTime: int, starveTime: int, position: Position)
   override this.move(position: Position)
   member this.eat() = ()
 
-type Simulation() =
+type Settings()
+  member width with get() = 0
+  member height with get() = 0
+  member numberOfPredators with get() = 0
+  member numberOfPreys with get() = 0
+  member starveTime with get() = 0
+  member predatorBreedTime with get() = 0
+  member preyBreedTime with get() = 0
+  member timeSpan with get() = 0
+
+  member this.readJSON(file: string) =
+    let read = JsonValue.Load(file)
+
+
+type Simulation()
   member map = Array2D.create width height (Option<Animal>.None)
+  member history = [||]
+  member animals = [||]
