@@ -31,12 +31,12 @@ type Animal(breedTime:int,position:Position) =
   member this.breed() = ()
   abstract member tick:Array2D->unit
 
-type Prey(breedTime: int, position: Position)
+type Prey(breedTime: int, position: Position) =
   inherit Animal(breedTime, position)
 
   override this.move(position: Position)
 
-type Predator(breedTime: int, starveTime: int, position: Position)
+type Predator(breedTime: int, starveTime: int, position: Position) =
   inherit Animal(breedTime, position)
   let mutable _starveTime = starveTime
   member this.starveTime with get() = _starveTime
@@ -45,21 +45,22 @@ type Predator(breedTime: int, starveTime: int, position: Position)
   override this.move(position: Position)
   member this.eat() = ()
 
-type Settings()
-  member width with get() = 0
-  member height with get() = 0
-  member numberOfPredators with get() = 0
-  member numberOfPreys with get() = 0
-  member starveTime with get() = 0
-  member predatorBreedTime with get() = 0
-  member preyBreedTime with get() = 0
-  member timeSpan with get() = 0
+type Settings(jsonPath:string) =
+  member this.width with get() = 0
+  member this.height with get() = 0
+  member this.numberOfPredators with get() = 0
+  member this.numberOfPreys with get() = 0
+  member this.starveTime with get() = 0
+  member this.predatorBreedTime with get() = 0
+  member this.preyBreedTime with get() = 0
+  member this.timeSpan with get() = 0
 
-  member this.readJSON(file: string) =
-    let read = JsonValue.Load(file)
+  member this.readJSON() =
+    let read = JsonValue.Load(jsonPath)
+    read
 
 
-type Simulation()
+type Simulation() =
   member map = Array2D.create width height (Option<Animal>.None)
   member history = [||]
   member animals = [||]
