@@ -13,7 +13,7 @@ let rec main() =
   System.Threading.Thread.Sleep(50)
   clear()
   while not (validate_file input) do
-    writeln "Skriv stien til din settings fil:"
+    writeln "Write path to settings-file (for help, see readme.md):"
     input <- readln()
     clear()
   let settings = new Settings(input)
@@ -31,5 +31,6 @@ let rec main() =
       x <- rnd.Next(0,settings.width)
       y <- rnd.Next(0,settings.height)
     simulation.addPredator (x,y)
+  writeln "Simulating..."
   simulation.simulate()
 main()

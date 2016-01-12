@@ -224,9 +224,14 @@ and Simulation(settings:Settings) =
       let h = new HistoryRecord(this.clockTick, prey, pred)
       this.history <- Array.append this.history [||]
       json <- json + "\t" + h.toJSON()
-      if i < this.settings.timeSpan then json <- json + ",\n"
+      if i < this.settings.timeSpan-1 then json <- json + ",\n"
     json <- sprintf "[\n%s\n]" json
-    System.IO.File.WriteAllText("./output/" + (DateTime.Now.ToString()) + ".json",json)
+    let name = DateTime.Now.ToString()
+    System.IO.File.WriteAllText("./output/" + name  + ".json",json)
+    System.Console.Clear()
+    printfn "History records has been saved in \"output/%s.json\"!" name
+    System.Console.ReadKey() |> ignore
+    System.Console.Clear()
 
   /// <summary>Kills the Animal at (x, y)</summary>
   /// <param name="x">X coordinate of the Animal to kill</param>
@@ -248,6 +253,5 @@ and Simulation(settings:Settings) =
   /// <param name="y">Y-coodinate to spawn at</param>
   member this.addPredator (x, y) =
     let animal = Predator(this, x, y, this.settings.predatorBreedTime, this.settings.starveTime)
-    printfn "%O" (x,y)
     this.animals <- (upcast animal)::this.animals
     this.grid.[x, y] <- Some(upcast animal)
