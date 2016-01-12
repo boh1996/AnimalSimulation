@@ -226,7 +226,7 @@ and Simulation(settings:Settings) =
       json <- json + "\t" + h.toJSON()
       if i < this.settings.timeSpan-1 then json <- json + ",\n"
     json <- sprintf "[\n%s\n]" json
-    let name = DateTime.Now.ToString()
+    let name = DateTime.Now.ToString("y-M-d_H-m-s")
     System.IO.File.WriteAllText("./output/" + name  + ".json",json)
     System.Console.Clear()
     printfn "History records has been saved in \"output/%s.json\"!" name
