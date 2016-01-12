@@ -252,27 +252,26 @@
     datastruktur og mulighed for bedre error tjek. Derfor er valget faldet på 
     ".json".
 
-    Omkring output fil har vi også snakket om flere filformater,
+    I forhold til output fil var flere filformater på tale: 
     ".csv" er et meget bredt brugt format til simulationsdata,
-    mens ".json" er nemt at læse ind fra. Vi valgte at bruge JSON, da det giver 
+    mens ".json" er nemt at indlæse. Vi valgte at bruge JSON, da det giver 
     en mere struktureret måde at kombinere objekter og lister. JSON er let 
     tilgængelig i mange programmeringssprog, hvilket giver den fordel, at man 
     hurtigt vil kunne lave dynamisk manipulering af data fra simuleringen.
 
     \subsection*{Simulation}
       \texttt{Simulation} er den klasse der samler alt den nødvendige data for simulationen.
-      Når en ny simulation skal begyndes, konstrueres et \texttt{Simulation} objekt,
-      og til dets konstruktør funktion gives et settings objekt med de nødvendige indstillinger.
+      Når en ny simulation skal begyndes, konstrueres et \texttt{Simulation} objekt.
+      Til instansens constructor-funktion, gives et \texttt{Settings} objekt med de nødvendige indstillinger.
       Derefter sørger \texttt{Simulation} for at der bliver oprettet dyr,
-      kørt ticks m.m.
+      kørt ticks m.m, og styrer selve simulationen.
 
     \subsection*{Animal}
-      \texttt{Animal} er den globale/parent dyre klasse der som abstract klasse,
-      ligger en standard for hvordan et dyr ser ud.
-      Nogle få metoder kan implementeres på dette niveau, mens de fleste bare er abstract.
+      \texttt{Animal} er base klassen, som de forskellige grupper af dyr nedarver fra, og er en abstrakt klasse.
+      Nogle få metoder kan implementeres på dette niveau, mens de fleste er abstrakte, og defineres først i de nedarvende klasser.
 
       \subsubsection*{Prey}
-        \texttt{Prey} klassen nedarver fra den globale \texttt{Animal} klasse.
+        \texttt{Prey} klassen nedarver fra \texttt{Animal} klassen.
         Den skal bruges til at bestemme typen i listen/kortet over dyr,
         så \texttt{Prey} kan have en anden breedTime end Predators og så den kan implementere dens egen move.
 
