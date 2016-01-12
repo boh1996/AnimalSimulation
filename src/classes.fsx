@@ -86,7 +86,6 @@ type Simulation(settings:Settings) =
       printfn "%d" i
       let h = new HistoryRecord(this.clockTick, 0, 0)
       this.history <- Array.append this.history [||]
-      use ms = new MemoryStream() 
-      (new DataContractJsonSerializer(typeof<HistoryRecord>)).WriteObject(ms, h) 
-      json <- json + Encoding.Default.GetString(ms.ToArray())
+      json <- json + h.toJSON()
+    json <- sprintf "{[%s]}" json
     printfn "%A" json
