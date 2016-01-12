@@ -17,12 +17,21 @@ open System.Text
 /// <param name="predator:int">Number of predators</param>
 /// <returns>type</returns>
 type HistoryRecord(tick:int,prey:int,predator:int) =
+  /// <summary>Current tick</summary>
   member this.tick = tick
+
+  /// <summary>Number of preys at this tick</summary>
   member this.prey = prey
+
+  /// <summary>Number of predators at this tick</summary>
   member this.predator = predator
+
+  /// <summary>Converts the HistoryRecord to a JSON string</summary>
+  /// <returns>JSON string</returns>
   member this.toJSON() =
     sprintf "{\"tick\":%d,\"prey\":%d,\"predator\":%d}" this.tick this.prey this.predator
 
+/// <summary>Type to hold a 2D map position</summary>
 type Position = int*int
 
 /// <summary>Animal</summary>
@@ -56,21 +65,41 @@ type Predator(breedTime:int,starveTime:int,position:Position) =
   override this.move(position: Position) = ()
   member this.eat() = ()
 
+/// <summary>A class to hold default values</summary>
+/// <param name="jsonPath:string">The file to load the default values from</param>
 type Settings(jsonPath:string) =
   let read = JsonValue.Load(jsonPath)
+
+  /// <summary>Checks if the json value exists</summary>
+  /// <returns>The default value or JSON value</returns>
   let checkJson json defaultVal =
     if json <> JsonValue.Null then
       json.AsInteger()
     else
       defaultVal
 
+  /// <summary>Map width</summary>
   member this.width with get() = checkJson read?width 50
+
+  /// <summary>Map height</summary>
   member this.height with get() = checkJson read?height 50
+
+  /// <summary>Number of predators at the beginning</summary>
   member this.numberOfPredators with get() =  checkJson read?numberOfPredators 10
+
+  /// <summary>Number of preys at the beginning</summary>
   member this.numberOfPreys with get() =  checkJson read?numberOfPreys 10
+
+  /// <summary>starveTime for predators</summary>
   member this.starveTime with get() =  checkJson read?starveTime 5
+
+  /// <summary>Ticks between breeding for predators</summary>
   member this.predatorBreedTime with get() =  checkJson read?predatorBreedTime 5
+
+  /// <summary>Ticks between breeding for preys</summary>
   member this.preyBreedTime with get() =  checkJson read?preyBreedTime 5
+
+  /// <summary>Number of ticks the simulation is running</summary>
   member this.timeSpan with get() = checkJson read?timeSpan 50
 
 type Simulation(settings:Settings) =
