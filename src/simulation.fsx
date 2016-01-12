@@ -13,12 +13,11 @@ let rec main() =
   let mutable input = ""
   System.Threading.Thread.Sleep(50)
 
-  while not validate_file input do
+  while not (validate_file input) do
     writeln "Skriv stien til din settings fil"
     input <- readln()
     clear()
-
   let settings = new Settings(input)
-  let simulation = new Simulation()
-  s
+  let simulation = new Simulation(settings)
+  simulation.simulate()
 main()
