@@ -20,6 +20,8 @@ type HistoryRecord(tick:int,prey:int,predator:int) =
   member this.tick = tick
   member this.prey = prey
   member this.predator = predator
+  member this.toJSON() =
+    sprintf "{\"tick\":%d,\"prey\":%d,\"predator\":%d}" this.tick this.prey this.predator
 
 type Position = int*int
 
