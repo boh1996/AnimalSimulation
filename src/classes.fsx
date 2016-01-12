@@ -86,6 +86,7 @@ type Simulation(settings:Settings) =
       printfn "%d" i
       let h = new HistoryRecord(this.clockTick, 0, 0)
       this.history <- Array.append this.history [||]
-      json <- json + h.toJSON()
-    json <- sprintf "{[%s]}" json
-    printfn "%A" json
+      json <- json + "\t" + h.toJSON()
+      if i < this.settings.timeSpan then json <- json + ",\n"
+    json <- sprintf "[\n%s\n]" json
+    System.IO.File.WriteAllText("./output/" + (DateTime.Now.ToString()) + ".json",json)

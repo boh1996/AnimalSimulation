@@ -11,9 +11,9 @@ let validate_file str = System.IO.File.Exists(str)
 let rec main() =
   let mutable input = ""
   System.Threading.Thread.Sleep(50)
-
+  clear()
   while not (validate_file input) do
-    writeln "Skriv stien til din settings fil"
+    writeln "Skriv stien til din settings fil:"
     input <- readln()
     clear()
   let settings = new Settings(input)
