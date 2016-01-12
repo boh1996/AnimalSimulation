@@ -169,66 +169,63 @@
   \tableofcontents
 \section{Forord}
   Denne opgave er lavet i Programmering og Problemløsning(PoP),
-    på Datalogisk Institut - Københavns Universitet(DIKU) - første semester år 2015/2016.
+    på Datalogisk Institut ved Københavns Universitet (DIKU) - første semester år 2015/2016.
     Opgaven har opgavenummeret 11g.
     I gruppen er Mads U. Svendsen, Anders F. Jørgensen, Nicolai L. Hargreave og Bo H. Thomsen.
 \newpage
     
 \section{Introduktion} \label{sec:introduction}
    I dette projekt er målet at udvikle en simulator,
-   den kan simulere det kendte Prey/Predator udviklings problem.
-   Simulatoren skal vise udviklingen blandt en gruppe af byttedur, 
-   og en gruppe af rovdyr. Hvordan mængden af rovdyr i perioder stiger,
-   men når de så når et specielt sted - falder kraftigt. Hvorefter mængden af byttedyr stiger.
-   Målet for projektet er at vende sig til objekter, klasser, abstrakte klasser og nedarvning.
+   der kan simulere det kendte Prey/Predator udviklingsproblem.
+   Simulatoren skal vise udviklingen blandt en gruppe af byttedyr 
+   og en gruppe rovdyr. Formålet er at vise hvordan mængden af rovdyr i perioder stiger,
+   men når de så når en bestemt mængde - falder antallet kraftigt. Hvorefter mængden af byttedyr stiger.
+   Formålet med forløbet, som projektet indgår i, er at lære at bruge konkrete klasser/ objekter samt abstrakte klasser og nedarvning.
 
   \paragraph*{Sådan kompilerer du projektet\\}
-    I \path{/src} mappen ligger \path{simulation.fsx},
-    den kan kompileres med fsharpc og køres med mono.
-    Den generere \path{simulation.exe}.
+    I \path{/src} mappen ligger \path{simulation.fsx}.
+    fsx-filen kan kompileres med \texttt{fsharpc} og køres med \texttt{mono}.
+    
+    Unit-test findes i  mappen \path{/src}, i filen \path{test.fsx}.
 
-    Tests findes i  mappen \path{/src}, i filen \path{test.fsx}.
-
-    Flere informationer omkring settings-filen kan findes i \path{README.md}
+    Flere informationer omkring settings-filerne kan findes i \path{readme.md}
 
 \section{Problemformulering} \label{sec:problem}
   Vi vil i dette projekt, bygge en simulator der kan simulere,
-  hvordan flere arter lever sammen i et hapitat.
+  hvordan flere arter lever sammen i et habitat.
   Når nogle typer har den egenskab, at de kan spise andre.
-  I dette eksempel operere vi kun med to typer dyr, "Prey" og "Predator".
+  I dette eksempel operere vi kun med to typer af dyr, "Prey" og "Predator".
 
   \subsection{Kravspecifikation} \label{ssec:demands}
-    For at gøre kravene for opgaven klare for os selv, og for fremtidige læsere,
-    har vi her formuleret vores forståelse af opgavens krav.
+    Herunder er kravene for opgaven opstillet, som de er forstået af undertegnede gruppe.
 
-    I simulationen arbejder vi med et naturligt habitet,
-    med to grupper dyr "byttedyr" og "rovdyr" der interagere.
-    Hvor den ene gruppe er fødekilde for den anden.
+    I simulationen arbejder vi med et naturligt habitat,
+    med to grupper dyr: "byttedyr" og "rovdyr". De 2 grupper interagerer med 
+    hinanden. "byttedyr" er fødekilde for "rovdyr".
     Nedenfor følger reglerne for simulationen.
 
     \begin{enumerate}
       \item Begge grupper af dyr skal have en fast fødselsrate, der er bestemt ved simulationsstart.
-      \item Verdenen opdateres hver tidsenhed, kaldet "ticks", og ved hver tick får hvert dyr mulgighed for at udføre en handling.
+      \item Habitatet opdateres hver tidsenhed, kaldet "ticks". Ved hvert tick får hvert dyr mulgighed for at udføre en handling.
       \item Hvis der findes en ledige naboplads omkring dyret, har alle dyr mulighed for at flytte en plads for hver tick.
-      \item Når dyrets formeringstid når det fastsatte antal, findes der en ledig naboplads - hvor det nye dyr placeres. Derefter sættes dyres formeringstid til 0. Et dyr kan kun føde en gang per tick.
-      \item Rovdyr har en fastsat udsultningstid, hvis de ikke har spist før den når nul - dør de.
-      \item Et rovdyr kan kun spise byttedyr der står i nabofelterne, når robdyret spiser flytter det ind i det felt, hvor byttedyret står. Når rovdyret spiser, sættes udsultningstid til nul. At spiser tæller som rovdyrets bevægelse, dette tick.
-      \item Ved afslutningen af hver tick, opdateres hver dyrs lokale event tid/alder og formeringstid og udsultningstid formindskes/forøges alt efter implementationen.
+      \item Når dyrets formeringstid når det fastsatte antal, findes der en ledig naboplads - hvor det nye dyr placeres. Derefter sættes dyrets formeringstid til 0. Et dyr kan kun føde en gang per tick.
+      \item Rovdyr har en fastsat udsultningstid, hvis de ikke har spist før udsultningstiden er nået, dør den.
+      \item Et rovdyr kan kun spise byttedyr der står i nabofelterne. Når rovdyret spiser flytter det ind i det felt, hvor byttedyret står. Når rovdyret spiser, sættes udsultningstid til nul. At spiser tæller som rovdyrets bevægelse, dette tick.
+      \item Ved afslutningen af hver tick, opdateres hver dyrs lokale tid/alder, formeringstid og udsultningstid formindskes/forøges alt efter omstændighederne.
     \end{enumerate}
     
     Til selve opgaven, gælder der nogle regler som vi også skal følge.
-    \begin{enumerate}[label=item:programDeamnds]
-      \item Når en simulation startes skal følgende kunne fastsættes: Længden i clock ticks, formeringstiden for hver race individuelt og udsultningstiden for rovdyrene.
-      \item Ved hver tick, gemmes det nuværende tick og antal af hvert dyr(muligvis individuelt per dyregruppe)
-      \item Programmet kal udvikles, med klasser, objekter og nedarvning
+    \begin{enumerate}
+      \item Når en simulation startes, skal følgende kunne fastsættes: Længden i clock-ticks, formeringstiden for hver race individuelt og udsultningstiden for rovdyrene.
+      \item Ved hvert tick, gemmes det nuværende tick og antal af hvert dyr (evt. individuelt per dyregruppe).
+      \item Programmet kal udvikles med klasser, objekter og nedarvning
       \item Programmet skal designes med et UML-diagram
       \item Programmet skal kommenteres med F\#'s XML-kommentarstandard
       \item Programmet skal testes med unit-tests
     \end{enumerate}
 
   \section{Problemanalyse og design} \label{sec:design}
-    Efter at vi havde deffineret kravene til vores produkt(Se \namedref{ssec:demands}),
-    satte vi os ned og opbyggede en klasse struktur.
+    Efter at vi havde defineret kravene til vores produkt (Se \namedref{ssec:demands}), blev klasse-strukturen gennemtænkt.
     Voers ide til strukturen kan ses i \namedref{fig:umlDiagram}.
 
     \begin{figure}[H]
@@ -240,18 +237,27 @@
       \label{fig:umlDiagram}
     \end{figure}
 
-    Vi har haft flere overvejeler omkring det med starttilstand/indstillinger.
-    Efter snakken frem og tilbage mellem kommandopropt-input og filbaseret input,
-    er vi kommet frem til at bruge en fil.
-    Det giver os den reneste kode og giver nem mulighed for at tilføje flere indstillinger.
-    Filformatet for denne fil kunne være flere, både ".csv", ".txt" og "json" er gode formater,
-    de to første er meget simple, mens ".json" er meget struktureret og det sikre en hvis datastruktur
-    og mulighed for bedre error tjek. Derfor er valget faldet på ".json".
+    Vi har haft flere overvejeler i forhold til  det med 
+    starttilstand/indstillinger.
+    Valget stod mellem kommandopropt-input og filbaseret input.
+    Vi kom frem til at bruge en fil, da det giver mulighed for at kunne 
+    simulere den eksakt samme indstilling flere gange; på den lettest mulige 
+    måde.
+    Herudover giver det os den reneste kode og giver nem mulighed for at 
+    tilføje flere indstillinger.
+    For at gemme indstillingerne om formeringstid, habitatsstørrelse, osv., 
+    stod valget mellem ".csv", ".txt" og ".json".
+    ".csv" og ".txt" er simple dataformatter, som ville være lette at 
+    implementere, mens ".json" er meget struktureret og det sikre en vids 
+    datastruktur og mulighed for bedre error tjek. Derfor er valget faldet på 
+    ".json".
 
     Omkring output fil har vi også snakket om flere filformater,
     ".csv" er et meget bredt brugt format til simulationsdata,
-    mens ".json" er nemt at læse ind fra. ".json" giver mest struktur,
-    og afspejler også vores interne design og derfor faldt valget på det.
+    mens ".json" er nemt at læse ind fra. Vi valgte at bruge JSON, da det giver 
+    en mere struktureret måde at kombinere objekter og lister. JSON er let 
+    tilgængelig i mange programmeringssprog, hvilket giver den fordel, at man 
+    hurtigt vil kunne lave dynamisk manipulering af data fra simuleringen.
 
     \subsection*{Simulation}
       \texttt{Simulation} er den klasse der samler alt den nødvendige data for simulationen.
@@ -318,9 +324,9 @@
     rovdyrene sulter ihjel. Simulation indeholder følgende betydelige funktioner:
 
     \begin{itemize}
-      \list simulate - kører igennem alle dyrene og lader dem udføre en enkel handling og opdaterer clockTick
-      \list addPrey - laver et byttedyr på den givne position og med den givne breedTime
-      \list addPredator - laver et rovdyr på den givne position, med den givne breedTime og den givne starveTime
+      \item simulate - kører igennem alle dyrene og lader dem udføre en enkel handling og opdaterer clockTick
+      \item addPrey - laver et byttedyr på den givne position og med den givne breedTime
+      \item addPredator - laver et rovdyr på den givne position, med den givne breedTime og den givne starveTime
     \end{itemize}
     
     \subsection*{Animal}
@@ -328,8 +334,36 @@
       Predator. 
     
     \subsection*{Prey}
-    
+      Prey implementere Animal klassen,
+      den har to funktioner \lstinline$clone$ der opretter en ny prey
+      og $simulate$ der køres ved hver tick.
+
+      Simulate følger følgende rækkefølge, for operationerne,
+      den kan kun gøre en af de tre følgende ved hvert tick.
+
+      \begin{enumerate}
+        \item isDead - Hvis den er markeret som død, gør ingenting
+        \item breed - Hvis den kan føde, gør det
+        \item move - Hvis den kan bevæge sig, gør det
+      \end{enumerate}
+
     \subsection*{Predator}
+      Predator implementere Animal klassen,
+      den har fire funktioner \lstinline$clone$ der opretter en ny prey,
+      $simulate$ der køres ved hver tick, $feed$ der prøver at spise
+      og $adjacentPrey$ der prøver at finde en Prey i en nabocelle.
+
+      Simulate følger følgende rækkefølge, for operationerne,
+      den kan kun gøre en af de fire følgende ved hvert tick.
+
+      Hvis dens starveTimer når nul, ved staten af et tick - så dør den.
+
+      \begin{enumerate}
+        \item isDead - Hvis den er markeret som død, gør ingenting
+        \item feed - Hvis den kan spise en Prey i en af nabocellerne, gør det
+        \item breed - Hvis den kan føde, gør det
+        \item move - Hvis den kan bevæge sig, gør det
+      \end{enumerate}
     
     \subsection*{HistoryRecord}
       HistoryRecord er implementeret som en klasse, der instantieres og derefter ikke kan ændres på.
@@ -347,17 +381,39 @@
     med forskellige værdier.
 
     Her er vores default værdier.
-
     \lstinputlisting[language=JSON,caption={Default indstillinger},label={lst:defaultSettingsValues}]{../src/settings/default.json}
 
     Ovenstående værdier kan nedenstående, ved en af vores kørsler.
-    Værdierne vil selvfølgelig varriere, fra kørsel til kørsel. Fordi vi har tilfældighed indblandet.
+    Værdierne vil selvfølgelig varriere, fra kørsel til kørsel. Fordi vi har tilfældighed indblandet omkring bevægelsen.
 
     \begin{figure}[H]
       \centering
-      \includegraphics[width=520px]{figures/1simulation.png}
+      \includegraphics[width=400px]{figures/1sim.png}
       \caption{Graf over udviklingen for første simulation med "default.json"}
       \label{fig:firstSimulation}
+    \end{figure}
+
+    Vi har også testet med en setting, hvor der kommer mange prey's og en hvor der kommer mange predators.
+    Her er først den setting, hvor det er bedst for prey's.
+    \lstinputlisting[language=JSON,caption={Preys},label={lst:preysSettingsValues}]{../src/settings/prey.json}
+
+    Den generere følgende graf.
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width=400px]{figures/2sim.png}
+      \caption{Graf over udviklingen for simulationen med "prey.json"}
+      \label{fig:secondSimulation}
+    \end{figure}
+
+    Her er indstillingerne for den predator venlige version.
+    \lstinputlisting[language=JSON,caption={Predators},label={lst:predatorSettingsValues}]{../src/settings/predator.json}
+
+    Den generere følgende graf.
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width=400px]{figures/3sim.png}
+      \caption{Graf over udviklingen for simulationen med "predator.json"}
+      \label{fig:thirdSimulation}
     \end{figure}
 
 	\section{Diskussion og konlusion} \label{sec:conclusion}
@@ -373,9 +429,16 @@
     Programmet er kommenteret efter XML-kommentarstandarden og unit-testet.
 
   \section{Bilag}
-     
       \subsection{Brugervejledning} \label{ssec:manual}
-        
+        Programmet kan kompileres med Makefilen der forefindes i \path{/src} mappen.
+        For at køre programmet, kør \path{simulation.exe} filen.
+        Programmet vil derefter spørge dig om stien(fra kørsels mappen) tin den settings fil du vil bruge.
+        De medfølgende settingsfiler kan findes i \path{/settings} mappen.
+
+        Når simulatoren har kørt, laver den en ".json" fil, der ligges i \path{/output} mappen.
+        Filerne navngives efter DateTime formatet og indeholder en array af JSON objekter.
+        Objekterne har de følgende tre attributter "tick", "prey" og "predator".
+
       \subsection{Kildekode} \label{ssec:sourceCode}
         \lstinputlisting[caption={Simulations klasser},label={lst:classes}]{../src/classes.fsx}
         \lstinputlisting[caption={Simulations klasser},label={lst:simulation}]{../src/simulation.fsx}
