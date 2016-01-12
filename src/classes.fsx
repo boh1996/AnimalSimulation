@@ -94,7 +94,6 @@ type Animal(simulation, breedTime, x, y) =
             (List.filter (fun (x, y) -> x >= 0 && y >= 0 && x < width && y < height)
                 [x + 1, y; x, y + 1; x - 1, y; x, y - 1])
 
-    // returnerer enkel hosliggende celle der er tom (hvis der er en, Some, ellers None)
     /// <summary>Finds empty adjacent cells</summary>
     /// <returns>Array[Option]</returns>
     member this.adjacentEmpty =

@@ -54,11 +54,19 @@ let t3 = Assert (fun () -> simulation.grid.[2, 3] <> None) true "Add predator te
 
 // Find adjacent animals
 let adj = simulation.animals.[0].adjacentFilled
-let t4 = Assert (fun () -> adj.IsSome) true "Adjacent prey test 01"
+let t4 = Assert (fun () -> adj.IsSome) true "Adjacent test 01"
 
 // Kill an Animal
 simulation.kill (2, 2)
-let t5 = Assert (fun () -> simulation.grid.[2, 2] = None) true "Kill test 01"
+let t5 = Assert (fun () -> simulation.grid.[2, 2].IsNone) true "Kill test 01"
+
+// Adjacent empty
+let adjE = simulation.animals.[0].adjacentEmpty
+let t6 = Assert (fun () -> Array.length adjE  > 3 ) true "Adjacent empty test 01"
+
+let t8 = Assert (fun () -> simulation.animals.[1].move ) true "Move test 01"
+
+let t8 = Assert (fun () -> simulation.grid.[2, 3].IsNone ) true "Move test 02"
 
 let tests = [
     settingsTest1;
@@ -66,6 +74,9 @@ let tests = [
     t3;
     t4;
     t5;
+    t6;
+    t7;
+    t8;
 ]
 
 // Match all tests
