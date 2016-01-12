@@ -423,9 +423,16 @@
     Programmet er kommenteret efter XML-kommentarstandarden og unit-testet.
 
   \section{Bilag}
-     
       \subsection{Brugervejledning} \label{ssec:manual}
-        
+        Programmet kan kompileres med Makefilen der forefindes i \path{/src} mappen.
+        For at køre programmet, kør \path{simulation.exe} filen.
+        Programmet vil derefter spørge dig om stien(fra kørsels mappen) tin den settings fil du vil bruge.
+        De medfølgende settingsfiler kan findes i \path{/settings} mappen.
+
+        Når simulatoren har kørt, laver den en ".json" fil, der ligges i \path{/output} mappen.
+        Filerne navngives efter DateTime formatet og indeholder en array af JSON objekter.
+        Objekterne har de følgende tre attributter "tick", "prey" og "predator".
+
       \subsection{Kildekode} \label{ssec:sourceCode}
         \lstinputlisting[caption={Simulations klasser},label={lst:classes}]{../src/classes.fsx}
         \lstinputlisting[caption={Simulations klasser},label={lst:simulation}]{../src/simulation.fsx}
