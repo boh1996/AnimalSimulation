@@ -381,17 +381,39 @@
     med forskellige værdier.
 
     Her er vores default værdier.
-
     \lstinputlisting[language=JSON,caption={Default indstillinger},label={lst:defaultSettingsValues}]{../src/settings/default.json}
 
     Ovenstående værdier kan nedenstående, ved en af vores kørsler.
-    Værdierne vil selvfølgelig varriere, fra kørsel til kørsel. Fordi vi har tilfældighed indblandet.
+    Værdierne vil selvfølgelig varriere, fra kørsel til kørsel. Fordi vi har tilfældighed indblandet omkring bevægelsen.
 
     \begin{figure}[H]
       \centering
-      \includegraphics[width=520px]{figures/1sim.png}
+      \includegraphics[width=400px]{figures/1sim.png}
       \caption{Graf over udviklingen for første simulation med "default.json"}
       \label{fig:firstSimulation}
+    \end{figure}
+
+    Vi har også testet med en setting, hvor der kommer mange prey's og en hvor der kommer mange predators.
+    Her er først den setting, hvor det er bedst for prey's.
+    \lstinputlisting[language=JSON,caption={Preys},label={lst:preysSettingsValues}]{../src/settings/prey.json}
+
+    Den generere følgende graf.
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width=400px]{figures/2sim.png}
+      \caption{Graf over udviklingen for simulationen med "prey.json"}
+      \label{fig:secondSimulation}
+    \end{figure}
+
+    Her er indstillingerne for den predator venlige version.
+    \lstinputlisting[language=JSON,caption={Predators},label={lst:predatorSettingsValues}]{../src/settings/predator.json}
+
+    Den generere følgende graf.
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width=400px]{figures/3sim.png}
+      \caption{Graf over udviklingen for simulationen med "predator.json"}
+      \label{fig:thirdSimulation}
     \end{figure}
 
 	\section{Diskussion og konlusion} \label{sec:conclusion}
@@ -407,9 +429,16 @@
     Programmet er kommenteret efter XML-kommentarstandarden og unit-testet.
 
   \section{Bilag}
-     
       \subsection{Brugervejledning} \label{ssec:manual}
-        
+        Programmet kan kompileres med Makefilen der forefindes i \path{/src} mappen.
+        For at køre programmet, kør \path{simulation.exe} filen.
+        Programmet vil derefter spørge dig om stien(fra kørsels mappen) tin den settings fil du vil bruge.
+        De medfølgende settingsfiler kan findes i \path{/settings} mappen.
+
+        Når simulatoren har kørt, laver den en ".json" fil, der ligges i \path{/output} mappen.
+        Filerne navngives efter DateTime formatet og indeholder en array af JSON objekter.
+        Objekterne har de følgende tre attributter "tick", "prey" og "predator".
+
       \subsection{Kildekode} \label{ssec:sourceCode}
         \lstinputlisting[caption={Simulations klasser},label={lst:classes}]{../src/classes.fsx}
         \lstinputlisting[caption={Simulations klasser},label={lst:simulation}]{../src/simulation.fsx}
