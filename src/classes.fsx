@@ -11,10 +11,10 @@ open FSharp.Data.JsonExtensions
 /// <param name="prey:int">Number of preys</param>
 /// <param name="predator:int">Number of predators</param>
 /// <returns>type</returns>
-type HistoryRecord(tick: int, prey: int, predator: int) =
-  member tick = tick
-  member prey = prey
-  member predator = predator
+type HistoryRecord(tick:int,prey:int,predator:int) =
+  member this.tick = tick
+  member this.prey = prey
+  member this.predator = predator
 
 type Position = int*int
 
@@ -30,20 +30,20 @@ type Animal(breedTime:int,position:Position) =
   member this.breedClock with get() = 0
   abstract member move:Position->unit
   member this.breed() = ()
-  abstract member tick:Array2D->unit
+  //abstract member tick:Array2D->unit
 
 type Prey(breedTime: int, position: Position) =
   inherit Animal(breedTime, position)
 
-  override this.move(position: Position)
+  override this.move(position: Position) = ()
 
-type Predator(breedTime: int, starveTime: int, position: Position) =
+type Predator(breedTime:int,starveTime:int,position:Position) =
   inherit Animal(breedTime, position)
   let mutable _starveTime = starveTime
   member this.starveTime with get() = _starveTime
   member this.starveClock with get() = 0
 
-  override this.move(position: Position)
+  override this.move(position: Position) = ()
   member this.eat() = ()
 
 type Settings(jsonPath:string) =
@@ -53,7 +53,7 @@ type Settings(jsonPath:string) =
       json.AsInteger()
     else
       defaultVal
-      
+
   member this.width with get() = checkJson read?width 50
   member this.height with get() = checkJson read?height 50
   member this.numberOfPredators with get() =  checkJson read?numberOfPredators 10
@@ -63,9 +63,8 @@ type Settings(jsonPath:string) =
   member this.preyBreedTime with get() =  checkJson read?preyBreedTime 5
   member this.timeSpan with get() = checkJson read?timeSpan 50
 
-
-
-type Simulation() =
-  member map = Array2D.create width height (Option<Animal>.None)
-  member history = [||]
-  member animals = [||]
+type Simulation(settings:Settings) =
+  member this.settings = settings
+  member this.map = Array2D.create settings.width settings.height (Option<Animal>.None)
+  member this.history = [||]
+  member this.animals = [||]
