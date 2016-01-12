@@ -28,8 +28,22 @@ let Assert f b str =
         printfn "%O" x
         false
 
-let filePath = "settings/default.json"
+
+// 
+// Settings tests
+//
+let filePath = "/settings/default.json"
 let s = new Settings(filePath)
+
+let settingsTest1 = Assert (fun () -> s.width) 12 "Settings load json test 01"
+
+// 
+// Simulate tests
+//
+
+
+
+
 
 
 

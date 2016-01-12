@@ -34,7 +34,7 @@ type HistoryRecord(tick:int,prey:int,predator:int) =
 /// <summary>A class to hold default values</summary>
 /// <param name="jsonPath:string">The file to load the default values from</param>
 type Settings(jsonPath:string) =
-  let read = JsonValue.Load(jsonPath)
+  let read = JsonValue.Load(__SOURCE_DIRECTORY__  + jsonPath)
 
   /// <summary>Checks if the json value exists</summary>
   /// <returns>The default value or JSON value</returns>
