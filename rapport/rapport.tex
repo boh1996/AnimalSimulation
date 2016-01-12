@@ -312,25 +312,27 @@
       Som tidligere beskrevet i \namedref{ssec:designSettings}, sættes simulationens indstillinger i en JSON fil,
       der vælges når programmet åbnes. Filerne ligges i mappen \path{/src/settings} og gemmes i JSON formatet,
       med fil extensionen ".json".
-      Med programmet følger en default version, med et muligt testsenarie for programmet.
-      Denne default fil kan ses i \namedref{lst:defaultSettings}.
+      Med programmet følger en default indstilling, hvor rovdyr og byttedyr har 
+      lige stor chance for overlevelse, samt 2 andre indstillinger hvor de hver 
+      især har overtaget.
+      default filen kan ses i \namedref{lst:defaultSettings}.
       \lstinputlisting[language=JSON,caption={Default indstillinger},label={lst:defaultSettings}]{../src/settings/default.json}
 
-      Filhåndteringen står \texttt{Settings} klassen for, og den gives med som parameter når en ny \texttt{Simulation} startes.
-      De forskellige fields fra JSON filen loaded in i properties på \texttt{Settings} objektet.
-      Filen kan loaded når \texttt{Settings} objektet oprettes, med det første parameter.
+      \texttt{Settings} klassen selv for at hente JSON-indstillings-filen, og 
+      stien hertil gives som parameter når en ny instans af \texttt{Simulation} 
+      oprettes.
+      De forskellige attributer fra JSON filen loades ind i attributerne på \texttt{Settings} objektet.
     
     \subsection*{Simulation}
-    Simulation er en den klasse der styrer simulationen på den måde at den indeholder en matrix der indeholder
-    alle de felter hvor dyrene kan befinde sig og en liste der indeholder alle dyrene selv, derudover er det
-    Simulation der fortæller dyrene hvornår de kan foretage en handling. Simulation holder også styr på hvor
-    langt inde i simulationen den er nået, og bestemmer dermed hvornår dyrene kan formere sig og hvornår
-    rovdyrene sulter ihjel. Simulation indeholder følgende betydelige funktioner:
+    Klassen \texttt{Simulation} holder styr på simuleringen, i forhold til indstillinger, dyr og habitat og udfører også selve simuleringen.
+    Habitatet er en 2-dimensionel array som holder styr på dyrenes placering.
+    \texttt{Simulation} fortæller dyrene hvornår de kan foretage en handling.   
+    Simulation indeholder følgende betydelige funktioner:
 
     \begin{itemize}
-      \item simulate - kører igennem alle dyrene og lader dem udføre en enkel handling og opdaterer clockTick
-      \item addPrey - laver et byttedyr på den givne position og med den givne breedTime
-      \item addPredator - laver et rovdyr på den givne position, med den givne breedTime og den givne starveTime
+      \item simulate - er selve simuleringen hvor alle dyrene bliver kørt igennem og udfører en enkel handling, for hvert tick.
+      \item addPrey - opretter et byttedyr på en given position og med den givne breedTime
+      \item addPredator - opretter et rovdyr på en given position, med den givne breedTime og den givne starveTime
     \end{itemize}
     
     \subsection*{Animal}
@@ -338,12 +340,11 @@
       Predator. 
     
     \subsection*{Prey}
-      Prey implementere Animal klassen,
+      \texttt{Prey} implementere Animal klassen,
       den har to funktioner \lstinline$clone$ der opretter en ny prey
       og $simulate$ der køres ved hver tick.
 
-      Simulate følger følgende rækkefølge, for operationerne,
-      den kan kun gøre en af de tre følgende ved hvert tick.
+      \textit{simulate} har følgende prioritering/rækkefølge af \texttt{Prey}'s mulige handlinger (kun en enkelt handling kan udføres per tick):
 
       \begin{enumerate}
         \item isDead - Hvis den er markeret som død, gør ingenting
@@ -352,43 +353,42 @@
       \end{enumerate}
 
     \subsection*{Predator}
-      Predator implementere Animal klassen,
+      \texttt{Predator} implementerer Animal klassen,
       den har fire funktioner \lstinline$clone$ der opretter en ny prey,
       $simulate$ der køres ved hver tick, $feed$ der prøver at spise
       og $adjacentPrey$ der prøver at finde en Prey i en nabocelle.
 
-      Simulate følger følgende rækkefølge, for operationerne,
-      den kan kun gøre en af de fire følgende ved hvert tick.
+      \textit{simulate} har følgende prioritering/rækkefølge af \texttt{Predator}'s mulige handlinger (kun en enkelt handling kan udføres per tick):
 
-      Hvis dens starveTimer når nul, ved staten af et tick - så dør den.
+      Hvis dens starveTimer når nul, ved starten af et tick - så dør den.
 
       \begin{enumerate}
         \item isDead - Hvis den er markeret som død, gør ingenting
-        \item feed - Hvis den kan spise en Prey i en af nabocellerne, gør det
-        \item breed - Hvis den kan føde, gør det
-        \item move - Hvis den kan bevæge sig, gør det
+        \item feed - Hvis den kan spise et Prey i en af nabocellerne, gøres dette
+        \item breed - Hvis den kan føde, gøres dette
+        \item move - Hvis den kan bevæge sig, gøres dette
       \end{enumerate}
     
     \subsection*{HistoryRecord}
-      HistoryRecord er implementeret som en klasse, der instantieres og derefter ikke kan ændres på.
-      HistoryRecord har følgende fields:
+      HistoryRecord er implementeret som en klasse, der instantieres og derefter ikke ændres på.
+      HistoryRecord har følgende attributer:
       \begin{itemize}
         \item tick - Det clockTick tallene er fra
-        \item prey - Antal preys ved dette clockTick
-        \item predator - Antal predators ved dette clockTick
+        \item prey - Antal byttedyr ved dette tick
+        \item predator - Antal rovdyr ved dette tick
       \end{itemize}
-      HistoryRecord har ved siden af det en metode, \lstinline$toJSON()$ der returnere en string.
+      HistoryRecord har ved siden af det en metode, \lstinline$toJSON()$ der returnere objektet som en JSON-tegnfølge.
       
   \section{Afprøvning} \label{sec:unitTest}
 
-    Vi har lavet en del kørsler af vores simulation,
+    Vi har lavet en del kørsler af vores simuluring,
     med forskellige værdier.
 
-    Her er vores default værdier.
+    Her er vores værdier for default-indstillingen.
     \lstinputlisting[language=JSON,caption={Default indstillinger},label={lst:defaultSettingsValues}]{../src/settings/default.json}
 
-    Ovenstående værdier kan nedenstående, ved en af vores kørsler.
-    Værdierne vil selvfølgelig varriere, fra kørsel til kørsel. Fordi vi har tilfældighed indblandet omkring bevægelsen.
+    Ovenstående indstilling har givet nedenstående værdier ved en af vores test-kørsler.
+    Værdierne vil selvfølgelig varriere, fra kørsel til kørsel, fordi vi har tilfældighed ind over hvordan dyrenes bevægelse er.
 
     \begin{figure}[H]
       \centering
@@ -397,11 +397,11 @@
       \label{fig:firstSimulation}
     \end{figure}
 
-    Vi har også testet med en setting, hvor der kommer mange prey's og en hvor der kommer mange predators.
+    Vi har også testet med en indstilling, hvor der kommer mange prey's og en hvor der kommer mange predators.
     Her er først den setting, hvor det er bedst for prey's.
     \lstinputlisting[language=JSON,caption={Preys},label={lst:preysSettingsValues}]{../src/settings/prey.json}
 
-    Den generere følgende graf.
+    Det generede følgende graf.
     \begin{figure}[H]
       \centering
       \includegraphics[width=400px]{figures/2sim.png}
@@ -412,7 +412,7 @@
     Her er indstillingerne for den predator venlige version.
     \lstinputlisting[language=JSON,caption={Predators},label={lst:predatorSettingsValues}]{../src/settings/predator.json}
 
-    Den generere følgende graf.
+    Det generede følgende graf.
     \begin{figure}[H]
       \centering
       \includegraphics[width=400px]{figures/3sim.png}
@@ -430,26 +430,26 @@
 
 	\section{Diskussion og konlusion} \label{sec:conclusion}
     Vi har i dette projektet designet og bygget en simulator,
-    til at simulere hvordan to grupper af dyr "Prey" og "Predators" fungere i et naturligt habitat.
-    Simulatoren er designet og udviklet efter OOP paradigmen, og udnytter klasser og nedarvning.
+    til at simulere hvordan to grupper af dyr "Prey" og "Predators" fungerer i et simpelt habitat.
+    Simulatoren er designet og udviklet efter OOP paradigmet, og udnytter klasser og nedarvning.
     Programmet lever op til de krav der er stillet til programmet i \namedref{ssec:demands}.
-    Simulationen følger de stilne regler beskrevet under reglerne i \namedref{ssec:demands}.
+    Simulationen følger de stillede regler beskrevet under reglerne i \namedref{ssec:demands}.
 
     Programmet giver brugeren mulighed for selv at vælge starttilstand og 
-    historien for simulationen gemmes i en struktureret fil, der er nem at læse.
-    Programmet er designet med et UML diagram, og der er endda et UML diagram oer den færdige struktur.
+    log for hændelserne igennem simulueringen gemmes i en struktureret fil, der er nem at læse, både for mennesker og maskiner.
+    Programmet er designet med et UML diagram, og der er endda et UML diagram over den færdige struktur.
     Programmet er kommenteret efter XML-kommentarstandarden og unit-testet.
 
   \section{Bilag}
       \subsection{Brugervejledning} \label{ssec:manual}
-        Programmet kan kompileres med Makefilen der forefindes i \path{/src} mappen.
-        For at køre programmet, kør \path{simulation.exe} filen.
-        Programmet vil derefter spørge dig om stien(fra kørsels mappen) tin den settings fil du vil bruge.
+        Programmet kan kompileres med Make-filen der kan findes i \path{/src} mappen.
+        For at køre programmet, kør \path{simulation.exe}.
+        Programmet vil derefter spørge om en relativ sti (fra kørsels mappen) til den settings fil du vil bruge.
         De medfølgende settingsfiler kan findes i \path{/settings} mappen.
 
         Når simulatoren har kørt, laver den en ".json" fil, der ligges i \path{/output} mappen.
-        Filerne navngives efter DateTime formatet og indeholder en array af JSON objekter.
-        Objekterne har de følgende tre attributter "tick", "prey" og "predator".
+        Filerne navngives efter DateTime med formatet "yMdHms" og indeholder en tabel af JavaScript objekter.
+        Objekterne har de følgende tre attributter: "tick", "prey" og "predator".
 
       \subsection{Kildekode} \label{ssec:sourceCode}
         \lstinputlisting[caption={Simulations klasser},label={lst:classes}]{../src/classes.fsx}
