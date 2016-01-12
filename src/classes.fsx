@@ -69,6 +69,12 @@ type Settings(jsonPath:string) =
   member this.timeSpan with get() = checkJson read?timeSpan 50
   
 [<AbstractClass>]
+/// <summary>Animal</summary>
+/// <param name="simulation">The Simulation object, so grid can be accessed</param>
+/// <param name="breedTime">The breeding time for this animal</param>
+/// <param name="x">X position the Animal starts at</param>
+/// <param name="y">Y position the Animal starts at</param>
+/// <returns>Animal</returns>
 type Animal(simulation, breedTime, x, y) =
     member val simulation = simulation : Simulation
     member val breedTime = breedTime
@@ -76,7 +82,8 @@ type Animal(simulation, breedTime, x, y) =
     member val position = (x, y) with get, set
     member val isDead = false with get, set
 
-    // returnerer liste af hosliggende celler
+    /// <summary>Returns a list of adjacent cells</summary>
+    /// <returns>Array</returns>
     member this.adjacent =
         let (x, y) = this.position
         let grid = this.simulation.grid
@@ -88,15 +95,20 @@ type Animal(simulation, breedTime, x, y) =
                 [x + 1, y; x, y + 1; x - 1, y; x, y - 1])
 
     // returnerer enkel hosliggende celle der er tom (hvis der er en, Some, ellers None)
+    /// <summary>Finds empty adjacent cells</summary>
+    /// <returns>Array[Option]</returns>
     member this.adjacentEmpty =
         let grid = this.simulation.grid
         List.tryFind (fun (x, y) -> Option.isNone grid.[x, y]) this.adjacent
 
-    // returnerer enkel hosliggende celle der er fyldt  (hvis der er en, Some, ellers None)
+    /// <summary>Finds adjacent filled cells</summary>
+    /// <returns>Array[Option]</returns>
     member this.adjacentFilled =
         let grid = this.simulation.grid
         List.tryFind (fun (x, y) -> Option.isSome grid.[x, y]) this.adjacent
 
+    /// <summary>Checks if this animal is ready to breed, and if - it clones it</summary>
+    /// <returns>boolean</returns>
     member this.breed =
         let cell = this.adjacentEmpty
         let clockTick = this.simulation.clockTick
@@ -106,6 +118,8 @@ type Animal(simulation, breedTime, x, y) =
             true
         else false
 
+    /// <summary>If an empty adjacent cell is there, move this animal</summary>
+    /// <returns>boolean</returns>
     member this.move =
         let cell = this.adjacentEmpty
         if Option.isSome cell then
@@ -121,26 +135,48 @@ type Animal(simulation, breedTime, x, y) =
     abstract member clone : int * int -> unit
     abstract member simulate : unit
 
+/// <summary>Prey</summary>
+/// <param name="simulation">The parent simulation object</param>
+/// <param name="x">Spawn x coordinate of this Prey</param>
+/// <param name="y">Spawn y coordinate of this Prey</param>
+/// <param name="breedTime">Breeding time for this Prey</param>
+/// <returns>Prey</returns>
 and Prey(simulation, x, y, breedTime) =
     inherit Animal(simulation, breedTime, x, y)
 
+    /// <summary>Creates a new Prey at (x, y)</summary>
+    /// <param name="x">X-coodinate of the new Prey</param>
+    /// <param name="y">Y-coodinate of the new Prey</param>
     override this.clone (x, y) =
         this.simulation.addPrey (x, y)
 
+    /// <summary>Operations to run at each tick</summary>
+    /// <returns>unit</returns>
     override this.simulate =
         if this.isDead then ()
         elif this.breed then ()
         elif this.move then ()
 
+/// <summary>Predator</summary>
+/// <param name="simulation">The parent simulation object</param>
+/// <param name="x">Spawn x coordinate of this Prey</param>
+/// <param name="y">Spawn y coordinate of this Prey</param>
+/// <param name="breedTime">Breeding time for this Prey</param>
+/// <param name="starveTime">Starving time for this Predator</param>
+/// <returns>Predator</returns>
 and Predator(simulation, x, y, breedTime, starveTime) =
     inherit Animal(simulation, breedTime, x, y)
     member val starveTime = starveTime
     member val starveClock = simulation.clockTick with get, set
 
+    /// <summary>Returns some(Animal) if a Prey can be found in the adjacent cellls</summary>
+    /// <returns>Option</returns>
     member this.adjacentPrey =
         let grid = this.simulation.grid
         List.tryFind (fun (x, y) -> Option.isSome grid.[x, y] && grid.[x, y].Value :? Prey) this.adjacent
 
+    /// <summary>Tries to find a prey to eat</summary>
+    /// <returns>boolean</returns>
     member this.feed =
         let cell = this.adjacentPrey
         if Option.isSome cell then
@@ -149,9 +185,14 @@ and Predator(simulation, x, y, breedTime, starveTime) =
             true
         else false
 
+    /// <summary>Creates a new Predator at (x, y)</summary>
+    /// <param name="x">X-coodinate of the new Predator</param>
+    /// <param name="y">Y-coodinate of the new Predator</param>
     override this.clone (x, y) =
         this.simulation.addPredator (x, y)
 
+    /// <summary>Operations to run at each tick</summary>
+    /// <returns>unit</returns>
     override this.simulate =
         let clockTick = this.simulation.clockTick
         if clockTick >= this.starveTime + this.starveClock then
@@ -161,12 +202,17 @@ and Predator(simulation, x, y, breedTime, starveTime) =
         elif this.breed then ()
         elif this.move then ()
 
+/// <summary>Simulation class, controls the simulation and holds grid, clockTick etc</summary>
+/// <param name="settings:Settings">Initial settings object</param>
+/// <returns>Simulation</returns>
 and Simulation(settings:Settings) =
   member this.settings = settings
   member val history = [||] with get, set
   member val clockTick = 0 with get, set
   member val animals = [] : list<Animal> with get, set
   member val grid = Array2D.create settings.width settings.height (Option<Animal>.None)
+
+  /// <summary>Call this function to start the simulation</summary>
   member this.simulate() =
     let mutable json = ""
     for i=0 to this.settings.timeSpan-1 do
@@ -182,15 +228,24 @@ and Simulation(settings:Settings) =
     json <- sprintf "[\n%s\n]" json
     System.IO.File.WriteAllText("./output/" + (DateTime.Now.ToString()) + ".json",json)
 
+  /// <summary>Kills the Animal at (x, y)</summary>
+  /// <param name="x">X coordinate of the Animal to kill</param>
+  /// <param name="y">Y coordinate of the Animal to kill</param>
   member this.kill (x, y) =
     this.grid.[x, y].Value.isDead <- true
     this.grid.[x, y] <- None
 
+  /// <summary>Adds a Prey at (x, y) position</summary>
+  /// <param name="x">X coodinate to spawn at</param>
+  /// <param name="y">Y-coodinate to spawn at</param>
   member this.addPrey (x, y) =
     let animal = Prey(this, x, y, this.settings.preyBreedTime)
     this.animals <- (upcast animal)::this.animals
     this.grid.[x, y] <- Some(upcast animal)
 
+  /// <summary>Adds a predator at (x, y) position</summary>
+  /// <param name="x">X coodinate to spawn at</param>
+  /// <param name="y">Y-coodinate to spawn at</param>
   member this.addPredator (x, y) =
     let animal = Predator(this, x, y, this.settings.predatorBreedTime, this.settings.starveTime)
     printfn "%O" (x,y)
