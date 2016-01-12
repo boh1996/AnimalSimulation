@@ -31,9 +31,43 @@ type HistoryRecord(tick:int,prey:int,predator:int) =
   member this.toJSON() =
     sprintf "{\"tick\":%d,\"prey\":%d,\"predator\":%d}" this.tick this.prey this.predator
 
-/// <summary>Type to hold a 2D map position</summary>
-type Position = int*int
+/// <summary>A class to hold default values</summary>
+/// <param name="jsonPath:string">The file to load the default values from</param>
+type Settings(jsonPath:string) =
+  let read = JsonValue.Load(jsonPath)
 
+  /// <summary>Checks if the json value exists</summary>
+  /// <returns>The default value or JSON value</returns>
+  let checkJson json defaultVal =
+    if json <> JsonValue.Null then
+      json.AsInteger()
+    else
+      defaultVal
+
+  /// <summary>Map width</summary>
+  member this.width with get() = checkJson read?width 50
+
+  /// <summary>Map height</summary>
+  member this.height with get() = checkJson read?height 50
+
+  /// <summary>Number of predators at the beginning</summary>
+  member this.numberOfPredators with get() =  checkJson read?numberOfPredators 10
+
+  /// <summary>Number of preys at the beginning</summary>
+  member this.numberOfPreys with get() =  checkJson read?numberOfPreys 10
+
+  /// <summary>starveTime for predators</summary>
+  member this.starveTime with get() =  checkJson read?starveTime 5
+
+  /// <summary>Ticks between breeding for predators</summary>
+  member this.predatorBreedTime with get() =  checkJson read?predatorBreedTime 5
+
+  /// <summary>Ticks between breeding for preys</summary>
+  member this.preyBreedTime with get() =  checkJson read?preyBreedTime 5
+
+  /// <summary>Number of ticks the simulation is running</summary>
+  member this.timeSpan with get() = checkJson read?timeSpan 50
+  
 [<AbstractClass>]
 type Animal(simulation, breedTime, x, y) =
     member val simulation = simulation : Simulation
@@ -94,9 +128,9 @@ and Prey(simulation, x, y, breedTime) =
         this.simulation.addPrey (x, y)
 
     override this.simulate =
-        if this.isDead then printfn "dead prey"
-        elif this.breed then printfn "breeding prey"
-        elif this.move then printfn "moving prey"
+        if this.isDead then ()
+        elif this.breed then ()
+        elif this.move then ()
 
 and Predator(simulation, x, y, breedTime, starveTime) =
     inherit Animal(simulation, breedTime, x, y)
@@ -121,46 +155,13 @@ and Predator(simulation, x, y, breedTime, starveTime) =
     override this.simulate =
         let clockTick = this.simulation.clockTick
         if clockTick >= this.starveTime + this.starveClock then
-            this.simulation.kill this.position
+          this.simulation.kill this.position
+        elif this.isDead then ()
+        elif this.feed then ()
+        elif this.breed then ()
+        elif this.move then ()
 
-/// <summary>A class to hold default values</summary>
-/// <param name="jsonPath:string">The file to load the default values from</param>
-type Settings(jsonPath:string) =
-  let read = JsonValue.Load(jsonPath)
-
-  /// <summary>Checks if the json value exists</summary>
-  /// <returns>The default value or JSON value</returns>
-  let checkJson json defaultVal =
-    if json <> JsonValue.Null then
-      json.AsInteger()
-    else
-      defaultVal
-
-  /// <summary>Map width</summary>
-  member this.width with get() = checkJson read?width 50
-
-  /// <summary>Map height</summary>
-  member this.height with get() = checkJson read?height 50
-
-  /// <summary>Number of predators at the beginning</summary>
-  member this.numberOfPredators with get() =  checkJson read?numberOfPredators 10
-
-  /// <summary>Number of preys at the beginning</summary>
-  member this.numberOfPreys with get() =  checkJson read?numberOfPreys 10
-
-  /// <summary>starveTime for predators</summary>
-  member this.starveTime with get() =  checkJson read?starveTime 5
-
-  /// <summary>Ticks between breeding for predators</summary>
-  member this.predatorBreedTime with get() =  checkJson read?predatorBreedTime 5
-
-  /// <summary>Ticks between breeding for preys</summary>
-  member this.preyBreedTime with get() =  checkJson read?preyBreedTime 5
-
-  /// <summary>Number of ticks the simulation is running</summary>
-  member this.timeSpan with get() = checkJson read?timeSpan 50
-
-type Simulation(settings:Settings) =
+and Simulation(settings:Settings) =
   member this.settings = settings
   member val history = [||] with get, set
   member val clockTick = 0 with get, set
@@ -168,16 +169,13 @@ type Simulation(settings:Settings) =
   member val grid = Array2D.create settings.width settings.height (Option<Animal>.None)
   member this.simulate() =
     let mutable json = ""
-    for i=1 to this.settings.timeSpan do
+    for i=0 to this.settings.timeSpan-1 do
       this.clockTick <- i
-
-      List.iter (fun (animal : Animal) -> animal.simulate) this.animals
-      this.animals <- List.filter (fun (animal : Animal) -> not animal.isDead) this.animals
-
-      let (pred, prey) = List.fold ( fun (pd, py) animal -> if :? animal = Prey then (pd, py +1) else (pd +1, py)  ) (0, 0) this.animals
-
-      printfn "%d" i
-      let h = new HistoryRecord(this.clockTick, pred, prey)
+      if i > 0 then
+        List.iter (fun (animal : Animal) -> animal.simulate) this.animals
+        this.animals <- List.filter (fun (animal : Animal) -> not animal.isDead) this.animals
+      let (pred:int, prey:int) = List.fold ( fun (pd, py) (animal:Animal) -> if animal :? Prey then (pd,py+1) else (pd+1,py))(0,0) this.animals
+      let h = new HistoryRecord(this.clockTick, prey, pred)
       this.history <- Array.append this.history [||]
       json <- json + "\t" + h.toJSON()
       if i < this.settings.timeSpan then json <- json + ",\n"
@@ -189,11 +187,12 @@ type Simulation(settings:Settings) =
     this.grid.[x, y] <- None
 
   member this.addPrey (x, y) =
-    let animal = Prey(this, x, y, this.preyBreedTime)
+    let animal = Prey(this, x, y, this.settings.preyBreedTime)
     this.animals <- (upcast animal)::this.animals
     this.grid.[x, y] <- Some(upcast animal)
 
   member this.addPredator (x, y) =
     let animal = Predator(this, x, y, this.settings.predatorBreedTime, this.settings.starveTime)
+    printfn "%O" (x,y)
     this.animals <- (upcast animal)::this.animals
     this.grid.[x, y] <- Some(upcast animal)

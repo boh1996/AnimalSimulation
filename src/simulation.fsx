@@ -18,10 +18,18 @@ let rec main() =
     clear()
   let settings = new Settings(input)
   let simulation = new Simulation(settings)
-  simulation.addPrey (2, 2) 7
-  simulation.addPrey (6, 6) 9
-  simulation.addPrey (4, 9) 11
-  simulation.addPredator (4, 4) 12 16
-  simulation.addPredator (9, 2) 20 14
+  let rnd = System.Random()
+  for i=1 to settings.numberOfPreys do
+    let mutable (x,y) = (rnd.Next(0,settings.width),rnd.Next(0,settings.height))
+    while simulation.grid.[x,y] <> None do
+      x <- rnd.Next(0,settings.width)
+      y <- rnd.Next(0,settings.height)
+    simulation.addPrey (x,y)
+  for i=1 to settings.numberOfPredators do
+    let mutable (x,y) = (rnd.Next(0,settings.width),rnd.Next(0,settings.height))
+    while simulation.grid.[x,y] <> None do
+      x <- rnd.Next(0,settings.width)
+      y <- rnd.Next(0,settings.height)
+    simulation.addPredator (x,y)
   simulation.simulate()
 main()
