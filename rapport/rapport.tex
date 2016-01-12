@@ -106,7 +106,43 @@
   texcl=true,
   extendedchars=true,
   inputencoding=utf8
-  }
+}
+
+\colorlet{punct}{red!60!black}
+\definecolor{background}{HTML}{EEEEEE}
+\definecolor{delim}{RGB}{20,105,176}
+\colorlet{numb}{blue}
+
+\lstdefinelanguage{json}{
+    basicstyle=\normalfont\ttfamily,
+    numbers=left,
+    numberstyle=\scriptsize,
+    stepnumber=1,
+    numbersep=8pt,
+    showstringspaces=false,
+    breaklines=true,
+    frame=lines,
+    backgroundcolor=\color{background},
+    literate=
+     *{0}{{{\color{numb}0}}}{1}
+      {1}{{{\color{numb}1}}}{1}
+      {2}{{{\color{numb}2}}}{1}
+      {3}{{{\color{numb}3}}}{1}
+      {4}{{{\color{numb}4}}}{1}
+      {5}{{{\color{numb}5}}}{1}
+      {6}{{{\color{numb}6}}}{1}
+      {7}{{{\color{numb}7}}}{1}
+      {8}{{{\color{numb}8}}}{1}
+      {9}{{{\color{numb}9}}}{1}
+      {:}{{{\color{punct}{:}}}}{1}
+      {,}{{{\color{punct}{,}}}}{1}
+      {\{}{{{\color{delim}{\{}}}}{1}
+      {\}}{{{\color{delim}{\}}}}}{1}
+      {[}{{{\color{delim}{[}}}}{1}
+      {]}{{{\color{delim}{]}}}}{1},
+    morestring=[b]",
+    morestring=[d]'
+}
 
 \setlength\parindent{0pt}
 
@@ -143,7 +179,7 @@
    Simulatoren skal vise udviklingen blandt en gruppe af byttedur, 
    og en gruppe af rovdyr. Hvordan mængden af rovdyr i perioder stiger,
    men når de så når et specielt sted - falder kraftigt. Hvorefter mængden af byttedyr stiger.
-   Målet for projektet er at vende sig til objekter, klasser, abstrakte klasser og inheritance.
+   Målet for projektet er at vende sig til objekter, klasser, abstrakte klasser og nedarvning.
 
   \paragraph*{Sådan kompilerer du projektet\\}
     I \path{/src} mappen ligger \path{simulation.fsx},
@@ -159,7 +195,34 @@
   I dette eksempel operere vi kun med to typer dyr, "Prey" og "Predator".
 
   \subsection{Kravspecifikation} \label{ssec:demands}
+    For at gøre kravene for opgaven klare for os selv, og for fremtidige læsere,
+    har vi her formuleret vores forståelse af opgavens krav.
+
+    I simulationen arbejder vi med et naturligt habitet,
+    med to grupper dyr "byttedyr" og "rovdyr" der interagere.
+    Hvor den ene gruppe er fødekilde for den anden.
+    Nedenfor følger reglerne for simulationen.
+
+    \begin{itemize}
+      \item Begge grupper af dyr skal have en fast fødselsrate, der er bestemt ved simulationsstart.
+      \item Verdenen opdateres hver tidsenhed, kaldet "ticks", og ved hver tick får hvert dyr mulgighed for at udføre en handling.
+      \item Hvis der findes en ledige naboplads omkring dyret, har alle dyr mulighed for at flytte en plads for hver tick.
+      \item Når dyrets formeringstid når det fastsatte antal, findes der en ledig naboplads - hvor det nye dyr placeres. Derefter sættes dyres formeringstid til 0. Et dyr kan kun føde en gang per tick.
+      \item Rovdyr har en fastsat udsultningstid, hvis de ikke har spist før den når nul - dør de.
+      \item Et rovdyr kan kun spise byttedyr der står i nabofelterne, når robdyret spiser flytter det ind i det felt, hvor byttedyret står. Når rovdyret spiser, sættes udsultningstid til nul. At spiser tæller som rovdyrets bevægelse, dette tick.
+      \item Ved afslutningen af hver tick, opdateres hver dyrs lokale event tid/alder og formeringstid og udsultningstid formindskes/forøges alt efter implementationen.
+    \end{itemize}
     
+    Til selve opgaven, gælder der nogle regler som vi også skal følge.
+    \begin{itemize}
+      \item Når en simulation startes skal følgende kunne fastsættes: Længden i clock ticks, formeringstiden for hver race individuelt og udsultningstiden for rovdyrene.
+      \item Ved hver tick, gemmes det nuværende tick og antal af hvert dyr(muligvis individuelt per dyregruppe)
+      \item Programmet kal udvikles, med klasser, objekter og nedarvning
+      \item Programmet skal designes med et UML-diagram
+      \item Programmet skal kommenteres med F\#'s XML-kommentarstandard
+      \item Programmet skal testes med unit-tests
+    \end{itemize}
+
   \section{Problemanalyse og design} \label{sec:design}
     Efter at vi havde deffineret kravene til vores produkt(Se \namedref{ssec:demands}),
     satte vi os ned og opbyggede en klasse struktur.
@@ -212,7 +275,7 @@
         og "starveClock" for at holde styr på sult. For at kunne gøre det, skal den overskrive move metoden,
         og implementere end eat metode. En anden constructor skal også implementeres, fordi at kunne sætte de nye værdier.
 
-    \subsection*{Settings}
+    \subsection*{Settings} \label{ssec:designSettings}
       Typen \texttt{Settings} er et container element, 
       der indeholder starttilstanden for simulationen.
       Den giver en struktureret måde at gemme og tilgå de indstilliger der skal bruges.
@@ -227,7 +290,17 @@
       Denne klasse ligger så struktur for et element i den JSON fil der gemmes når simulationen er slut.
 
   \section{Programbeskrivelse} \label{sec:programDescription}
-    
+    \subsection*{Settings}
+      Som tidligere beskrevet i \namedref{ssec:designSettings}, sættes simulationens indstillinger i en JSON fil,
+      der vælges når programmet åbnes. Filerne ligges i mappen \path{/src/settings} og gemmes i JSON formatet,
+      med fil extensionen ".json".
+      Med programmet følger en default version, med et muligt testsenarie for programmet.
+      Denne default fil kan ses i \namedref{lst:defaultSettings}.
+      \lstinputlisting[language=JSON,caption={Default indstillinger},label={lst:defaultSettings}]{../src/settings/default.json}
+
+      Filhåndteringen står \texttt{Settings} klassen for, og den gives med som parameter når en ny \texttt{Simulation} startes.
+      De forskellige fields fra JSON filen loaded in i properties på \texttt{Settings} objektet.
+      Filen kan loaded når \texttt{Settings} objektet oprettes, med det første parameter.
       
   \section{Afprøvning} \label{sec:unitTest}
     
@@ -239,7 +312,6 @@
       \subsection{Brugervejledning} \label{ssec:manual}
         
       \subsection{Kildekode} \label{ssec:sourceCode}
-        
         \lstinputlisting[caption={Simulations klasser},label={lst:classes}]{../src/classes.fsx}
         \lstinputlisting[caption={Simulations klasser},label={lst:simulation}]{../src/simulation.fsx}
         \lstinputlisting[caption={Simulations klasser},label={lst:test}]{../src/test.fsx}
