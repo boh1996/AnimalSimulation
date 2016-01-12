@@ -311,9 +311,16 @@
     \subsection*{Predator}
     
     \subsection*{HistoryRecord}
+      HistoryRecord er implementeret som en klasse, der instantieres og derefter ikke kan ændres på.
+      HistoryRecord har følgende fields:
+      \begin{itemize}
+        \item tick - Det clockTick tallene er fra
+        \item prey - Antal preys ved dette clockTick
+        \item predator - Antal predators ved dette clockTick
+      \end{itemize}
+      HistoryRecord har ved siden af det en metode, \lstinline$toJSON()$ der returnere en string.
       
   \section{Afprøvning} \label{sec:unitTest}
-    
 
 	\section{Diskussion og konlusion} \label{sec:conclusion}
    
