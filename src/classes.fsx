@@ -70,5 +70,4 @@ type Simulation(settings:Settings) =
   member this.animals = [||]
   member this.simulate() =
     for i=1 to this.settings.timeSpan do
-      System.Threading.Thread.Sleep(500)
       printfn "%d" i
