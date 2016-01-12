@@ -6,7 +6,6 @@ let writeln (str:string) = System.Console.WriteLine str
 let readln() = System.Console.ReadLine()
 let setcursor(x,y) = System.Console.SetCursorPosition(x,y)
 let clear() = System.Console.Clear()
-
 let validate_file str = System.IO.File.Exists(str)
 
 let rec main() =
