@@ -47,7 +47,6 @@ type Predator(breedTime: int, starveTime: int, position: Position) =
   member this.eat() = ()
 
 type Settings(jsonPath:string) =
-  // let s = new Settings(__SOURCE_DIRECTORY__ + "setttings/default.json")
   let read = JsonValue.Load(jsonPath)
   let checkJson json defaultVal =
     if json <> JsonValue.Null then
