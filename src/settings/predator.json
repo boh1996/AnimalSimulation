@@ -1,0 +1,10 @@
+{
+    "width": 12,
+    "height": 12,
+    "numberOfPredators": 10,
+    "numberOfPreys": 40,
+    "starveTime": 10,
+    "predatorBreedTime": 9,
+    "preyBreedTime": 11,
+    "timeSpan": 1000
+}
