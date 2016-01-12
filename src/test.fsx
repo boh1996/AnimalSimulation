@@ -40,14 +40,31 @@ let settingsTest1 = Assert (fun () -> s.width) 12 "Settings load json test 01"
 // 
 // Simulate tests
 //
+let simulation = new Simulation(settings)
 
+// Add prey
+simulation.addPrey (2,2)
+let t2 = Assert (fun () -> simulation.grid[2, 2] <> None) true "Add prey test 01"
 
+// Add predator
+simulation.addPredator (2,3)
+let t3 = Assert (fun () -> simulation.grid[2, 3] <> None) true "Add predator test 01"
 
+// Find adjacent preys
+let adj = simulation.animals[1].adjacentPrey
+let t4 = Assert (fun () -> adj.length) 1 "Adjacent prey test 01"
 
+// Kill an Animal
+simulation.kill (2, 2)
+let t5 = Assert (fun () -> simulation.grid[2, 2] = None) true "Kill test 01"
 
-
-
-let tests = []
+let tests = [
+    settingsTest1;
+    t2;
+    t3;
+    t4;
+    t5;
+]
 
 // Match all tests
-//Assert ( fun () -> List.forall ( fun x -> x = true ) tests = true ) true "All tests"
+Assert ( fun () -> List.forall ( fun x -> x = true ) tests = true ) true "All tests"
