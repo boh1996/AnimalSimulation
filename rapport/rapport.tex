@@ -273,13 +273,14 @@
       \subsubsection*{Prey}
         \texttt{Prey} klassen nedarver fra \texttt{Animal} klassen.
         Den skal bruges til at bestemme typen i listen/kortet over dyr,
-        så \texttt{Prey} kan have en anden breedTime end Predators og så den kan implementere dens egen move.
+        så \texttt{Prey} kan have en anden formeringstid end en \texttt{Predator} instans og kan implementere dens egen bevægelsesmetode (move).
 
       \subsubsection*{Predator}
-        \texttt{Predator} klassen nedarver fra den globale \texttt{Animal} klasse,
-        så udover de metoder og properties+fields der kommer derfra, skal den indeholde "starveTime"
-        og "starveClock" for at holde styr på sult. For at kunne gøre det, skal den overskrive move metoden,
-        og implementere end eat metode. En anden constructor skal også implementeres, fordi at kunne sætte de nye værdier.
+        \texttt{Predator} klassen nedarver fra base klassen \texttt{Animal}.
+        Så udover de metoder og attributer der kommer fra \texttt{Animal}, skal 
+        den indeholde "starveTime" og "starveClock" for at holde styr på sult. 
+        For at kunne gøre det, skal den overskrive move metoden,
+        og implementere en "eat" metode. En anden constructor skal også implementeres, for at kunne sætte de udsultningstiden.
 
     \subsection*{Settings} \label{ssec:designSettings}
       Typen \texttt{Settings} er et container element, 
@@ -291,9 +292,13 @@
       Et Settings objekt kan derfor heller ikke oprettes uden at der gives en fil.
 
     \subsection*{HistoryRecord}
-      HistoryRecord er en container klasse, der indeholder tilstanden for habitatet efter et tick.
-      Den skal indeholde antal ticks siden start, antal preys og antal predators ved dette tick.
-      Denne klasse ligger så struktur for et element i den JSON fil der gemmes når simulationen er slut.
+      \texttt{HistoryRecord} er en container klasse, der indeholder tilstanden 
+      for habitatet per tick; så en \texttt{HistoryRecord} indeholder 
+      informationer om habitatet for et tick.
+      Den skal indeholde antal ticks siden start, antal byttedyr og antal 
+      rovdyr ved dette tick.
+      Klassen har en metode \textit{toJSON}, som objektet til et JavaScript 
+      Objekt, serialiseret.
 
   \section{Programbeskrivelse} \label{sec:programDescription}
     \begin{figure}[H]
@@ -413,6 +418,14 @@
       \includegraphics[width=400px]{figures/3sim.png}
       \caption{Graf over udviklingen for simulationen med "predator.json"}
       \label{fig:thirdSimulation}
+    \end{figure}
+
+    For at sikre at vores output fil følger de rette standarder, har vi kørt den gennem \href{http://jsonlint.com}{JSONLint}.
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width=400px]{figures/JSONLit.jpg}
+      \caption{JSONLint resultat}
+      \label{fig:jsonLINT}
     \end{figure}
 
 	\section{Diskussion og konlusion} \label{sec:conclusion}
