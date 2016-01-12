@@ -92,6 +92,7 @@
 \usepackage{amssymb}
 \usepackage{nameref}
 \usepackage{lmodern}
+\usepackage{enumitem}
 
 \lstset{ %
   numbers=right,                    % where to put the line-numbers; possible values are (none, left, right)
@@ -189,7 +190,7 @@
     Tests findes i  mappen \path{/src}, i filen \path{test.fsx}.
 
 \section{Problemformulering} \label{sec:problem}
-  Vi vil i dette projekt, bygge en ssimulator der kan simulere,
+  Vi vil i dette projekt, bygge en simulator der kan simulere,
   hvordan flere arter lever sammen i et hapitat.
   Når nogle typer har den egenskab, at de kan spise andre.
   I dette eksempel operere vi kun med to typer dyr, "Prey" og "Predator".
@@ -203,7 +204,7 @@
     Hvor den ene gruppe er fødekilde for den anden.
     Nedenfor følger reglerne for simulationen.
 
-    \begin{itemize}
+    \begin{enumerate}
       \item Begge grupper af dyr skal have en fast fødselsrate, der er bestemt ved simulationsstart.
       \item Verdenen opdateres hver tidsenhed, kaldet "ticks", og ved hver tick får hvert dyr mulgighed for at udføre en handling.
       \item Hvis der findes en ledige naboplads omkring dyret, har alle dyr mulighed for at flytte en plads for hver tick.
@@ -211,17 +212,17 @@
       \item Rovdyr har en fastsat udsultningstid, hvis de ikke har spist før den når nul - dør de.
       \item Et rovdyr kan kun spise byttedyr der står i nabofelterne, når robdyret spiser flytter det ind i det felt, hvor byttedyret står. Når rovdyret spiser, sættes udsultningstid til nul. At spiser tæller som rovdyrets bevægelse, dette tick.
       \item Ved afslutningen af hver tick, opdateres hver dyrs lokale event tid/alder og formeringstid og udsultningstid formindskes/forøges alt efter implementationen.
-    \end{itemize}
+    \end{enumerate}
     
     Til selve opgaven, gælder der nogle regler som vi også skal følge.
-    \begin{itemize}
+    \begin{enumerate}[label=item:programDeamnds]
       \item Når en simulation startes skal følgende kunne fastsættes: Længden i clock ticks, formeringstiden for hver race individuelt og udsultningstiden for rovdyrene.
       \item Ved hver tick, gemmes det nuværende tick og antal af hvert dyr(muligvis individuelt per dyregruppe)
       \item Programmet kal udvikles, med klasser, objekter og nedarvning
       \item Programmet skal designes med et UML-diagram
       \item Programmet skal kommenteres med F\#'s XML-kommentarstandard
       \item Programmet skal testes med unit-tests
-    \end{itemize}
+    \end{enumerate}
 
   \section{Problemanalyse og design} \label{sec:design}
     Efter at vi havde deffineret kravene til vores produkt(Se \namedref{ssec:demands}),
@@ -261,8 +262,6 @@
       \texttt{Animal} er den globale/parent dyre klasse der som abstract klasse,
       ligger en standard for hvordan et dyr ser ud.
       Nogle få metoder kan implementeres på dette niveau, mens de fleste bare er abstract.
-      \texttt{Animal} fastligger at et dyr skal fieldsene age, breedTime, breedClock
-      og metoderne move, breed og tick.
 
       \subsubsection*{Prey}
         \texttt{Prey} klassen nedarver fra den globale \texttt{Animal} klasse.
@@ -290,6 +289,13 @@
       Denne klasse ligger så struktur for et element i den JSON fil der gemmes når simulationen er slut.
 
   \section{Programbeskrivelse} \label{sec:programDescription}
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width=520px]{figures/umlDone.png}
+      \caption{UML diagram over vores færdige klasser}
+      \label{fig:umlDiagramDone}
+    \end{figure}
+
     \subsection*{Settings}
       Som tidligere beskrevet i \namedref{ssec:designSettings}, sættes simulationens indstillinger i en JSON fil,
       der vælges når programmet åbnes. Filerne ligges i mappen \path{/src/settings} og gemmes i JSON formatet,
@@ -323,7 +329,17 @@
   \section{Afprøvning} \label{sec:unitTest}
 
 	\section{Diskussion og konlusion} \label{sec:conclusion}
-   
+    Vi har i dette projektet designet og bygget en simulator,
+    til at simulere hvordan to grupper af dyr "Prey" og "Predators" fungere i et naturligt habitat.
+    Simulatoren er designet og udviklet efter OOP paradigmen, og udnytter klasser og nedarvning.
+    Programmet lever op til de krav der er stillet til programmet i \namedref{ssec:demands}.
+    Simulationen følger de stilne regler beskrevet under reglerne i \namedref{ssec:demands}.
+
+    Programmet giver brugeren mulighed for selv at vælge starttilstand og 
+    historien for simulationen gemmes i en struktureret fil, der er nem at læse.
+    Programmet er designet med et UML diagram, og der er endda et UML diagram oer den færdige struktur.
+    Programmet er kommenteret efter XML-kommentarstandarden og unit-testet.
+
   \section{Bilag}
      
       \subsection{Brugervejledning} \label{ssec:manual}
@@ -332,7 +348,4 @@
         \lstinputlisting[caption={Simulations klasser},label={lst:classes}]{../src/classes.fsx}
         \lstinputlisting[caption={Simulations klasser},label={lst:simulation}]{../src/simulation.fsx}
         \lstinputlisting[caption={Simulations klasser},label={lst:test}]{../src/test.fsx}
-
-      \subsection{Billeder}
-        
 \end{document}
