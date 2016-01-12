@@ -62,9 +62,9 @@ let t5 = Assert (fun () -> simulation.grid.[2, 2].IsNone) true "Kill test 01"
 
 // Adjacent empty
 let adjE = simulation.animals.[0].adjacentEmpty
-let t6 = Assert (fun () -> Array.length adjE  > 3 ) true "Adjacent empty test 01"
+let t6 = Assert (fun () -> adjE.IsSome ) true "Adjacent empty test 01"
 
-let t8 = Assert (fun () -> simulation.animals.[1].move ) true "Move test 01"
+let t7 = Assert (fun () -> simulation.animals.[0].move ) true "Move test 01"
 
 let t8 = Assert (fun () -> simulation.grid.[2, 3].IsNone ) true "Move test 02"
 
