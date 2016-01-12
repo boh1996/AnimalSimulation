@@ -318,9 +318,9 @@
     rovdyrene sulter ihjel. Simulation indeholder følgende betydelige funktioner:
 
     \begin{itemize}
-      \list simulate - kører igennem alle dyrene og lader dem udføre en enkel handling og opdaterer clockTick
-      \list addPrey - laver et byttedyr på den givne position og med den givne breedTime
-      \list addPredator - laver et rovdyr på den givne position, med den givne breedTime og den givne starveTime
+      \item simulate - kører igennem alle dyrene og lader dem udføre en enkel handling og opdaterer clockTick
+      \item addPrey - laver et byttedyr på den givne position og med den givne breedTime
+      \item addPredator - laver et rovdyr på den givne position, med den givne breedTime og den givne starveTime
     \end{itemize}
     
     \subsection*{Animal}
@@ -328,8 +328,36 @@
       Predator. 
     
     \subsection*{Prey}
-    
+      Prey implementere Animal klassen,
+      den har to funktioner \lstinline$clone$ der opretter en ny prey
+      og $simulate$ der køres ved hver tick.
+
+      Simulate følger følgende rækkefølge, for operationerne,
+      den kan kun gøre en af de tre følgende ved hvert tick.
+
+      \begin{enumerate}
+        \item isDead - Hvis den er markeret som død, gør ingenting
+        \item breed - Hvis den kan føde, gør det
+        \item move - Hvis den kan bevæge sig, gør det
+      \end{enumerate}
+
     \subsection*{Predator}
+      Predator implementere Animal klassen,
+      den har fire funktioner \lstinline$clone$ der opretter en ny prey,
+      $simulate$ der køres ved hver tick, $feed$ der prøver at spise
+      og $adjacentPrey$ der prøver at finde en Prey i en nabocelle.
+
+      Simulate følger følgende rækkefølge, for operationerne,
+      den kan kun gøre en af de fire følgende ved hvert tick.
+
+      Hvis dens starveTimer når nul, ved staten af et tick - så dør den.
+
+      \begin{enumerate}
+        \item isDead - Hvis den er markeret som død, gør ingenting
+        \item feed - Hvis den kan spise en Prey i en af nabocellerne, gør det
+        \item breed - Hvis den kan føde, gør det
+        \item move - Hvis den kan bevæge sig, gør det
+      \end{enumerate}
     
     \subsection*{HistoryRecord}
       HistoryRecord er implementeret som en klasse, der instantieres og derefter ikke kan ændres på.
