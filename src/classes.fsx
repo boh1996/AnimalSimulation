@@ -34,36 +34,94 @@ type HistoryRecord(tick:int,prey:int,predator:int) =
 /// <summary>Type to hold a 2D map position</summary>
 type Position = int*int
 
-/// <summary>Animal</summary>
-/// <param name="breedTime:int">breedTime:int</param>
-/// <param name="position:Position">Current position of the Animal</param>
 [<AbstractClass>]
-type Animal(breedTime:int,position:Position) =
-  let mutable _position,_age=position,0
-  member val age = _age with get, set
-  member this.position with get() = _position
-  member this.breedTime with get() = breedTime
-  member val breedClock = 0 with get, set
-  abstract member move:Position->unit
-  member this.breed() = ()
-  member this.tick() =
-    this.breedClock <- this.breedClock + 1
-    this.age <- this.age + 1
-  //abstract member tick:Array2D->unit
+type Animal(simulation, breedTime, x, y) =
+    member val simulation = simulation : Simulation
+    member val breedTime = breedTime
+    member val breedClock = simulation.clockTick with get, set
+    member val position = (x, y) with get, set
+    member val isDead = false with get, set
 
-type Prey(breedTime: int, position: Position) =
-  inherit Animal(breedTime, position)
+    // returnerer liste af hosliggende celler
+    member this.adjacent =
+        let (x, y) = this.position
+        let grid = this.simulation.grid
+        let width = Array2D.length1 grid
+        let height = Array2D.length2 grid
+        let random = Random()
+        List.sortWith (fun _ _ -> random.Next(-4, 4))
+            (List.filter (fun (x, y) -> x >= 0 && y >= 0 && x < width && y < height)
+                [x + 1, y; x, y + 1; x - 1, y; x, y - 1])
 
-  override this.move(position: Position) = ()
+    // returnerer enkel hosliggende celle der er tom (hvis der er en, Some, ellers None)
+    member this.adjacentEmpty =
+        let grid = this.simulation.grid
+        List.tryFind (fun (x, y) -> Option.isNone grid.[x, y]) this.adjacent
 
-type Predator(breedTime:int,starveTime:int,position:Position) =
-  inherit Animal(breedTime, position)
-  let mutable _starveTime = starveTime
-  member this.starveTime with get() = _starveTime
-  member this.starveClock with get() = 0
+    // returnerer enkel hosliggende celle der er fyldt  (hvis der er en, Some, ellers None)
+    member this.adjacentFilled =
+        let grid = this.simulation.grid
+        List.tryFind (fun (x, y) -> Option.isSome grid.[x, y]) this.adjacent
 
-  override this.move(position: Position) = ()
-  member this.eat() = ()
+    member this.breed =
+        let cell = this.adjacentEmpty
+        let clockTick = this.simulation.clockTick
+        if Option.isSome cell && clockTick >= this.breedTime + this.breedClock then
+            this.breedClock <- clockTick
+            this.clone cell.Value
+            true
+        else false
+
+    member this.move =
+        let cell = this.adjacentEmpty
+        if Option.isSome cell then
+            let grid = this.simulation.grid
+            let (x, y) = this.position
+            let (x', y') = cell.Value
+            grid.[x, y] <- None
+            grid.[x', y'] <- Some(this)
+            this.position <- (x', y')
+            true
+        else false
+
+    abstract member clone : int * int -> unit
+    abstract member simulate : unit
+
+and Prey(simulation, x, y, breedTime) =
+    inherit Animal(simulation, breedTime, x, y)
+
+    override this.clone (x, y) =
+        this.simulation.addPrey (x, y)
+
+    override this.simulate =
+        if this.isDead then printfn "dead prey"
+        elif this.breed then printfn "breeding prey"
+        elif this.move then printfn "moving prey"
+
+and Predator(simulation, x, y, breedTime, starveTime) =
+    inherit Animal(simulation, breedTime, x, y)
+    member val starveTime = starveTime
+    member val starveClock = simulation.clockTick with get, set
+
+    member this.adjacentPrey =
+        let grid = this.simulation.grid
+        List.tryFind (fun (x, y) -> Option.isSome grid.[x, y] && grid.[x, y].Value :? Prey) this.adjacent
+
+    member this.feed =
+        let cell = this.adjacentPrey
+        if Option.isSome cell then
+            this.simulation.kill cell.Value
+            this.starveClock <- this.simulation.clockTick
+            true
+        else false
+
+    override this.clone (x, y) =
+        this.simulation.addPredator (x, y)
+
+    override this.simulate =
+        let clockTick = this.simulation.clockTick
+        if clockTick >= this.starveTime + this.starveClock then
+            this.simulation.kill this.position
 
 /// <summary>A class to hold default values</summary>
 /// <param name="jsonPath:string">The file to load the default values from</param>
@@ -104,18 +162,38 @@ type Settings(jsonPath:string) =
 
 type Simulation(settings:Settings) =
   member this.settings = settings
-  member val map = Array2D.create settings.width settings.height (Option<Animal>.None) with get, set
   member val history = [||] with get, set
-  member val animals = [||]
   member val clockTick = 0 with get, set
+  member val animals = [] : list<Animal> with get, set
+  member val grid = Array2D.create settings.width settings.height (Option<Animal>.None)
   member this.simulate() =
     let mutable json = ""
     for i=1 to this.settings.timeSpan do
       this.clockTick <- i
+
+      List.iter (fun (animal : Animal) -> animal.simulate) this.animals
+      this.animals <- List.filter (fun (animal : Animal) -> not animal.isDead) this.animals
+
+      let (pred, prey) = List.fold ( fun (pd, py) animal -> if :? animal = Prey then (pd, py +1) else (pd +1, py)  ) (0, 0) this.animals
+
       printfn "%d" i
-      let h = new HistoryRecord(this.clockTick, 0, 0)
+      let h = new HistoryRecord(this.clockTick, pred, prey)
       this.history <- Array.append this.history [||]
       json <- json + "\t" + h.toJSON()
       if i < this.settings.timeSpan then json <- json + ",\n"
     json <- sprintf "[\n%s\n]" json
     System.IO.File.WriteAllText("./output/" + (DateTime.Now.ToString()) + ".json",json)
+
+  member this.kill (x, y) =
+    this.grid.[x, y].Value.isDead <- true
+    this.grid.[x, y] <- None
+
+  member this.addPrey (x, y) =
+    let animal = Prey(this, x, y, this.preyBreedTime)
+    this.animals <- (upcast animal)::this.animals
+    this.grid.[x, y] <- Some(upcast animal)
+
+  member this.addPredator (x, y) =
+    let animal = Predator(this, x, y, this.settings.predatorBreedTime, this.settings.starveTime)
+    this.animals <- (upcast animal)::this.animals
+    this.grid.[x, y] <- Some(upcast animal)

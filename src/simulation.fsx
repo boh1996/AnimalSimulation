@@ -18,5 +18,10 @@ let rec main() =
     clear()
   let settings = new Settings(input)
   let simulation = new Simulation(settings)
+  simulation.addPrey (2, 2) 7
+  simulation.addPrey (6, 6) 9
+  simulation.addPrey (4, 9) 11
+  simulation.addPredator (4, 4) 12 16
+  simulation.addPredator (9, 2) 20 14
   simulation.simulate()
 main()
