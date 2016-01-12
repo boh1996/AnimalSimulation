@@ -31,6 +31,8 @@ let Assert f b str =
 let filePath = "settings/default.json"
 let s = new Settings(filePath)
 
+
+
 let tests = []
 
 // Match all tests
