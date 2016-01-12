@@ -189,6 +189,8 @@
 
     Tests findes i  mappen \path{/src}, i filen \path{test.fsx}.
 
+    Flere informationer omkring settings-filen kan findes i \path{README.md}
+
 \section{Problemformulering} \label{sec:problem}
   Vi vil i dette projekt, bygge en simulator der kan simulere,
   hvordan flere arter lever sammen i et hapitat.
@@ -340,6 +342,23 @@
       HistoryRecord har ved siden af det en metode, \lstinline$toJSON()$ der returnere en string.
       
   \section{Afprøvning} \label{sec:unitTest}
+
+    Vi har lavet en del kørsler af vores simulation,
+    med forskellige værdier.
+
+    Her er vores default værdier.
+
+    \lstinputlisting[language=JSON,caption={Default indstillinger},label={lst:defaultSettingsValues}]{../src/settings/default.json}
+
+    Ovenstående værdier kan nedenstående, ved en af vores kørsler.
+    Værdierne vil selvfølgelig varriere, fra kørsel til kørsel. Fordi vi har tilfældighed indblandet.
+
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width=520px]{figures/1simulation.png}
+      \caption{Graf over udviklingen for første simulation med "default.json"}
+      \label{fig:firstSimulation}
+    \end{figure}
 
 	\section{Diskussion og konlusion} \label{sec:conclusion}
     Vi har i dette projektet designet og bygget en simulator,
