@@ -309,6 +309,17 @@
       Filen kan loaded når \texttt{Settings} objektet oprettes, med det første parameter.
     
     \subsection*{Simulation}
+    Simulation er en den klasse der styrer simulationen på den måde at den indeholder en matrix der indeholder
+    alle de felter hvor dyrene kan befinde sig og en liste der indeholder alle dyrene selv, derudover er det
+    Simulation der fortæller dyrene hvornår de kan foretage en handling. Simulation holder også styr på hvor
+    langt inde i simulationen den er nået, og bestemmer dermed hvornår dyrene kan formere sig og hvornår
+    rovdyrene sulter ihjel. Simulation indeholder følgende betydelige funktioner:
+
+    \begin{itemize}
+      \list simulate - kører igennem alle dyrene og lader dem udføre en enkel handling og opdaterer clockTick
+      \list addPrey - laver et byttedyr på den givne position og med den givne breedTime
+      \list addPredator - laver et rovdyr på den givne position, med den givne breedTime og den givne starveTime
+    \end{itemize}
     
     \subsection*{Animal}
       Animal er en abstract-class, og er en skabelon for klasserne Prey og 
